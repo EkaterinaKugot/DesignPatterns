@@ -5,11 +5,13 @@ from src.abstract_reference import abstract_reference
 """
 class range(abstract_reference):
 
-    def __init__(self, name: str, conversion_factor: int, base_range: range = None):
+    def __init__(self, unit_name: str = "грамм", conversion_factor: int = 1, base_range: range = None):
         super().__init__()
         if base_range is not None and base_range.conversion_factor > conversion_factor:
             raise TypeError("Некорректно передан параметр!")
-        self.name = name
+        if not isinstance(unit_name, str) or not isinstance(conversion_factor, int):
+            raise TypeError("Некорректно передан параметр!")
+        self.unit_name = unit_name
         self.conversion_factor = conversion_factor
         self.base_range = base_range
 
