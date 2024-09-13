@@ -1,3 +1,6 @@
+"""
+Настройки
+"""
 class settings:
     __organization_name = ""
     __inn = ""
@@ -15,7 +18,7 @@ class settings:
     def organization_name(self, value: str):
         if not isinstance(value, str):
             raise TypeError("Некорректно передан параметр!")
-        self.__organization_name = value
+        self.__organization_name = value.strip()
 
     @property
     def inn(self):

@@ -1,8 +1,12 @@
 import json
 import glob
-from modules.settings import settings
+from src.models.settings_model import settings
+from src.abstract_logic import abstract_logic
 
-class settings_manager:
+"""
+Менеджер настроек
+"""
+class settings_manager(abstract_logic):
     __file_name = "settings.json"
     __settings: settings = settings()
 
@@ -32,19 +36,32 @@ class settings_manager:
             self.__file_name = file_name
 
         try:
-            self.convert()
-        except:
+            return self.convert()
+        except Exception as ex:
             self.__settings = self.__default_setting()
+            self.set_exception(ex)
             return False
-
-    #Настройки
+    
+    """
+    Загруженные настройки
+    """
     @property
-    def settings(self):
+    def current_settings(self) -> settings:
         return self.__settings
     
-    def __default_setting(self):
-        data = settings()
-        data.inn = "3545252"
-        data.organization_name = "Рога и копыта"
-        data.director_name = "Kate"
-        return data
+
+    """
+    Набор настроек по умолчанию
+    """
+    def __default_setting(self) -> settings:
+        _settings = settings()
+        _settings.inn = "380080920202"
+        _settings.organization_name = "Рога и копыта (default)"
+        _settings.account = "11127400937"
+        _settings.сorrespondent_account = "86127390170"
+        _settings.bik = "662817992"
+        _settings.type_property = "lalal"
+        return _settings
+    
+    def set_exception(self, ex: Exception):
+        self._inner_set_exception(ex)
