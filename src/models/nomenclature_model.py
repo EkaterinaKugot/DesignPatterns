@@ -1,6 +1,7 @@
 from src.abstract_reference import abstract_reference
 from src.models.group_nomenclature_model import group_nomenclature
 from src.models.range_model import range
+from src.errors.validator import Validator
 
 class nomenclature(abstract_reference):
     __full_name: str = ""
@@ -13,8 +14,8 @@ class nomenclature(abstract_reference):
     
     @full_name.setter
     def full_name(self, full_name: str):
-        if not isinstance(full_name, str) or len(full_name) > 255:
-            raise TypeError("Некорректно передан параметр!")
+        Validator.validate_type("full_name", full_name, str)
+        Validator.validate_permissible_length("full_name", full_name, 255)
         self.__full_name = full_name.strip()
 
     @property

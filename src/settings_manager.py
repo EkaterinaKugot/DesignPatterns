@@ -2,6 +2,7 @@ import json
 import glob
 from src.models.settings_model import settings
 from src.abstract_logic import abstract_logic
+from src.errors.validator import Validator
 
 """
 Менеджер настроек
@@ -29,8 +30,7 @@ class settings_manager(abstract_logic):
 
 
     def open(self, file_name: str = "") -> bool:
-        if not isinstance(file_name, str):
-            raise TypeError("Некорректно передан параметр!")
+        Validator.validate_type("file_name", file_name, str)
         
         if file_name != "":
             self.__file_name = file_name

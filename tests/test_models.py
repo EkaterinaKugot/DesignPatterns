@@ -5,6 +5,8 @@ from src.models.group_nomenclature_model import group_nomenclature
 from src.models.storage_model import storage
 from src.models.organization_model import organization
 from src.settings_manager import settings_manager
+from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException
+from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, ElementNotFoundException
 
 class test_models(unittest.TestCase):
 
@@ -79,7 +81,56 @@ class test_models(unittest.TestCase):
       # Проверка
       assert n1.full_name == "test1"
       assert n1.range.unit_name == "кг" and n1.range.conversion_factor == 500
-      assert n1.range.base_range.unit_name == "грамм" and n1.range.base_range.conversion_factor == 1
+      assert n1.range.base_range.unit_name == "грамм" and n1.range.base_range.conversion_factor == 1 
+
+   """
+   Проверить некорректные типы у атрибутов nomenclature_model
+   """
+   def test_type_nomenclature_fail(self):
+      # Подготовка
+      n1 = nomenclature()
+
+      with self.assertRaises(TypeException):
+            n1.full_name = 123
+      
+      with self.assertRaises(TypeException):
+            n1.name = 567
+
+   """
+   Проверить некорректную длину у атрибутов nomenclature_model
+   """
+   def test_length_nomenclature_fail(self):
+      # Подготовка
+      n1 = nomenclature()
+
+      with self.assertRaises(PermissibleLengthException):
+            n1.full_name = "e" * 256
+      
+      with self.assertRaises(PermissibleLengthException):
+            n1.name = "t" * 100
+
+   """
+   Проверить некорректный тип у атрибутов range_model
+   """
+   def test_type_range_fail(self):
+      with self.assertRaises(TypeException):
+         base_range = range(678, 1)
+
+      with self.assertRaises(TypeException):
+         base_range = range("грамм", "ooo")
+
+   """
+   Проверить некорректный коэффициентом пересчета range_model
+   """
+   def test_conversion_factor_range_fail(self):
+      base_range = range("грамм", 1000)
+      
+      with self.assertRaises(PermissibleValueException):
+          new_range = range("кг", 1, base_range)
+
+
+if __name__ == '__main__':
+    unittest.main() 
 
 
 

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import uuid
+from src.errors.validator import Validator
 
 """
 Абстрактный класс для обработки моделей
@@ -15,10 +16,10 @@ class abstract_reference(ABC):
         return self.__name
     
     @name.setter
-    def name(self, value: str):
-        if not isinstance(value, str) or len(value) > 50:
-            raise TypeError("Некорректно передан параметр!")
-        self.__name = value.strip()
+    def name(self, name: str):
+        Validator.validate_type("name", name, str)
+        Validator.validate_permissible_length("name", name, 50)
+        self.__name = name.strip()
 
     @property
     def id(self) -> int:
