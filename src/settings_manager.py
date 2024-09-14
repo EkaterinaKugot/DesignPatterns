@@ -26,6 +26,8 @@ class settings_manager(abstract_logic):
         for key in data.keys():
             if key in fields:
                 self.__settings.__setattr__(key, data[key])
+            else:
+                self.set_exception(f"Неожиданный ключ {key} со значением {data[key]}.")
         return True
 
 
