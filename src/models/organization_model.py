@@ -12,8 +12,8 @@ class organization(abstract_reference):
     """
     Режим сравнения (по id)
     """
-    def equal(self, other) -> bool:
-        return super().equal(other)
+    def __eq__(self, other) -> bool:
+        return super().__eq__(other)
     
-    def unequal(self, other) -> bool:
-        return super().unequal(other)
+    def __ne__(self, other) -> bool:
+        return super().__ne__(other)

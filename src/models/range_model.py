@@ -19,10 +19,10 @@ class range(abstract_reference):
     """
     Режим сравнения (по наименованию)
     """
-    def equal(self, other) -> bool:
+    def __eq__(self, other) -> bool:
         if other is None: return False
         if not isinstance(other, range): return False
         return self.name == other.name
     
-    def unequal(self, other) -> bool:
+    def __ne__(self, other) -> bool:
         return self.name != other.name
