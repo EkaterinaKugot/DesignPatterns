@@ -25,24 +25,18 @@ class abstract_reference(ABC):
     def id(self) -> int:
         return self.__id
 
-    def __eq__(self, other_model) -> bool:
-        return self.equal(other_model)
-    
-    def __ne__(self, other_model) -> bool:
-        return self.unequal(other_model)
-
     """
     Абстрактный метод для сравнения равенства
     """
     @abstractmethod
-    def equal(self, other) -> bool:
-        if other is None: return False
-        if not isinstance(other, abstract_reference): return False
-        return self.id == other.id
+    def __eq__(self, other_model) -> bool:
+        if other_model is None: return False
+        if not isinstance(other_model, abstract_reference): return False
+        return self.id == other_model.id
     
     """
     Абстрактный метод для сравнения неравенства
     """
     @abstractmethod
-    def unequal(self, other) -> bool:
-        return self.id != other.id
+    def __ne__(self, other_model) -> bool:
+        return self.id != other_model.id
