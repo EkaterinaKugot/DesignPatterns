@@ -1,7 +1,7 @@
 import json
 import glob
-from src.models.settings_model import settings
-from src.abstract_logic import abstract_logic
+from src.models.settings import settings
+from src.core.abstract_logic import abstract_logic
 from src.errors.validator import Validator
 
 """

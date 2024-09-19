@@ -1,10 +1,10 @@
-from src.abstract_reference import abstract_reference
+from src.core.base_model import base_model_name
 from src.errors.validator import Validator
 
 """
 Модель единицы измерения
 """
-class range(abstract_reference):
+class range_model(base_model_name):
 
     def __init__(self, unit_name: str = "грамм", conversion_factor: int = 1, base_range: range = None):
         super().__init__()
@@ -15,14 +15,3 @@ class range(abstract_reference):
         self.unit_name = unit_name
         self.conversion_factor = conversion_factor
         self.base_range = base_range
-
-    """
-    Режим сравнения (по наименованию)
-    """
-    def __eq__(self, other) -> bool:
-        if other is None: return False
-        if not isinstance(other, range): return False
-        return self.name == other.name
-    
-    def __ne__(self, other) -> bool:
-        return self.name != other.name
