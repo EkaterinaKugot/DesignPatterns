@@ -4,9 +4,12 @@ from src.models.range import range_model
 from src.models.group import group_model
 from src.models.storage import storage_model
 from src.models.organization import organization_model
+from src.models.recipe import recipe_model
+
 from src.settings_manager import settings_manager
+
 from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException
-from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, ElementNotFoundException
+from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, EmptyLengthException
 
 class test_models(unittest.TestCase):
 
@@ -84,6 +87,85 @@ class test_models(unittest.TestCase):
       assert n1.full_name == "test1"
       assert n1.range.unit_name == "кг" and n1.range.conversion_factor == 500
       assert n1.range.base_range.unit_name == "грамм" and n1.range.base_range.conversion_factor == 1 
+   
+   """
+   Проверить извлечение данных из таблицы markdown
+   """
+   def test_extract_columns_from_table(self):
+      file_name = "recipe1.md" 
+      ingredients, gram = nomenclature_model.extract_columns_from_table(file_name)
+
+      test_ingredients = ["Пшеничная мука", "Сахар", "Сливочное масло", "Яйцо", "Ванилин"]
+      test_gram = [[100, "гр"], [80, "гр"], [70, "гр"], [1, "шт"], [5, "гр"],]
+
+      assert len(ingredients) != 0 
+      assert len(gram) != 0 
+      assert len(gram) == len(ingredients)
+      assert ingredients == test_ingredients
+      assert gram == test_gram 
+
+   """
+   Проверить создание спика номенклатур
+   """
+   def test_create_list_nomenclature(self):
+      ingredients, gram = nomenclature_model.process_markdown_files()
+
+      assert len(ingredients) != 0 
+      assert len(gram) != 0 
+      assert len(gram) == len(ingredients)
+
+      list1 = nomenclature_model.create_list_nomenclature(ingredients, gram)
+
+      assert len(list1) != 0
+      assert isinstance(list1, list)
+
+      for nom in list1:
+          assert isinstance(nom, nomenclature_model)
+
+   """
+   Проверить статические методы group_model
+   """
+   def test_staticmethod_group_model(self):
+      group1 = group_model.default_group_source()
+      group2 = group_model.default_group_cold()
+
+      assert isinstance(group1, group_model)
+      assert isinstance(group2, group_model)
+
+      assert group1.name == "Сырье"
+      assert group2.name == "Заморозка"
+
+   """
+   Проверить создание recipe_model
+   """
+   def test_recipe_model(self):
+      rec = recipe_model("recipe2.md")
+
+      assert len(rec.nomenclatures) != 0
+      for nom in rec.nomenclatures:
+          assert isinstance(nom, nomenclature_model)
+
+      nom0 = rec.nomenclatures[0]
+      assert nom0.full_name == "Пшеничная мука"
+      assert nom0.group.name == "Сырье"
+      assert nom0.range.unit_name == "гр" and nom0.range.conversion_factor == 250
+
+      assert rec.number_servings == 12
+      assert rec.cooking_time == "30 мин"
+      assert len(rec.cooking_steps) != 0
+
+   
+   """
+   Проверить создание пустого recipe_model
+   """
+   def test_empty_recipe_model(self):
+      rec = recipe_model("")
+
+      assert rec.nomenclatures is None
+      assert rec.number_servings == 0
+      assert rec.cooking_time is None
+      assert rec.cooking_steps is None
+
 
    """
    Проверить некорректные типы у атрибутов nomenclature_model
@@ -135,6 +217,78 @@ class test_models(unittest.TestCase):
       
       with self.assertRaises(PermissibleValueException):
           new_range = range_model("кг", 1, base_range)
+
+   """
+   Проверить некорректное имя файла/директории при извлечении данных из рецептов
+   """
+   def test_invalid_file_name(self):
+      with self.assertRaises(TypeException):
+         c1, c2 = nomenclature_model.extract_columns_from_table(123)
+
+      with self.assertRaises(TypeException):
+         c1, c2 = nomenclature_model.extract_columns_from_table("recipe1.md", 340)
+
+      with self.assertRaises(EmptyLengthException):
+         c1, c2 = nomenclature_model.extract_columns_from_table("")
+
+      with self.assertRaises(EmptyLengthException):
+         c1, c2 = nomenclature_model.extract_columns_from_table("recipe1.md", "")
+
+      with self.assertRaises(TypeException):
+         c1, c2 = nomenclature_model.process_markdown_files(123)
+
+      with self.assertRaises(EmptyLengthException):
+         c1, c2 = nomenclature_model.process_markdown_files("")
+
+      with self.assertRaises(TypeException):
+         recipe_model(789)
+
+   """
+   Проверить некорректные аргументы при создании списка номенклатур
+   """
+   def test_incorrect_arguments_list_nomenclature(self):
+      cor_ingredients = ["Яйцо"]
+      cor_gram = [[100, "гр"]]
+
+      incor_ingredients = [567]
+      incor_gram1 = [[dict(), "гр"]]
+      incor_gram2 = [[1, dict()]]
+
+      with self.assertRaises(TypeException):
+         c1, c2 = nomenclature_model.create_list_nomenclature(incor_ingredients, cor_gram)
+      
+      with self.assertRaises(TypeException):
+         c1, c2 = nomenclature_model.create_list_nomenclature(cor_ingredients, incor_gram1)
+
+      with self.assertRaises(TypeException):
+         c1, c2 = nomenclature_model.create_list_nomenclature(cor_ingredients, incor_gram2)
+
+   """
+   Проверить некорректные атрибуты recipe_model
+   """
+   def test_incorrect_arguments_recipe_model(self):
+      rec = recipe_model("")
+
+      with self.assertRaises(TypeException):
+         rec.nomenclatures = 123
+
+      with self.assertRaises(TypeException):
+         rec.nomenclatures = [456]
+
+      with self.assertRaises(TypeException):
+         rec.number_servings = "45"
+
+      with self.assertRaises(TypeException):
+         rec.cooking_time = 999
+
+      with self.assertRaises(EmptyLengthException):
+         rec.cooking_time = ""
+
+      with self.assertRaises(TypeException):
+         rec.cooking_steps = 44
+
+      with self.assertRaises(EmptyLengthException):
+         rec.cooking_steps = ""
 
 
 if __name__ == '__main__':

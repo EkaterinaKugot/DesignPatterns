@@ -48,7 +48,7 @@ class test_settings(unittest.TestCase):
 
       # Проверки
       assert manager1.current_settings.inn == manager2.current_settings.inn
-      assert manager1.current_settings.organization_name == manager2.current_settings.organization_name
+      assert manager1.current_settings.organization_name == manager2.current_settings.organization_name   
 
    """
    Проверить некорректное имя файла с настройками

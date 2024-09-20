@@ -32,8 +32,8 @@ class PermissibleValueException(CustomException):
         self.message = f"Аргумент '{argument_name}' со значением '{value}' не должен превышать {permissible_value}."
         super().__init__(self.message)
 
-class ElementNotFoundException(CustomException):
-    """Исключение для ошибок, связанных с отсутствием файла или данных."""
-    def __init__(self, element_name: str, message: str = "Директория или файл"):
-        self.message = f"{message} '{element_name}' не найдены."
+class EmptyLengthException(CustomException):
+    """Исключение для ошибок, связанных пустой строкой."""
+    def __init__(self, argument_name: str, message: str = "Аргумент"):
+        self.message = f"{message} '{argument_name}' не должен быть пуст."
         super().__init__(self.message)

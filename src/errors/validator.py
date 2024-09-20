@@ -1,5 +1,5 @@
-from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException
-from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, ElementNotFoundException
+from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException, EmptyLengthException
+from src.errors.custom_exception import PermissibleValueException, RequiredLengthException
 class Validator:
     @staticmethod
     def validate_type(argument_name: str, value, required_type):
@@ -30,9 +30,9 @@ class Validator:
         """Проверяет, что значение не равно None"""
         if value is None:
             raise ArgumentException(argument_name)
-
+        
     @staticmethod
-    def validate_element_not_found(element_name: str):
-        """Проверяет не пустое ли имя файла или директории"""
-        if len(element_name) == 0:
-            raise ElementNotFoundException(element_name)
+    def validate_empty_length(argument_name: str, value: str):
+        """Проверяет не пуста ли строка"""
+        if len(value) == 0:
+            raise EmptyLengthException(argument_name)
