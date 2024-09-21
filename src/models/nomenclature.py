@@ -26,7 +26,7 @@ class nomenclature_model(base_model_id):
         return self.__group
     
     @group.setter
-    def group(self, group):
+    def group(self, group: group_model):
         Validator.validate_type("group", group, group_model)
         self.__group = group
 
@@ -38,6 +38,6 @@ class nomenclature_model(base_model_id):
         return self.__range
     
     @range.setter
-    def range(self, range):
+    def range(self, range: range_model):
         Validator.validate_type("range", range, range_model)
         self.__range = range

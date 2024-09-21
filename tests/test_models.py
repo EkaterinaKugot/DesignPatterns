@@ -4,9 +4,12 @@ from src.models.range import range_model
 from src.models.group import group_model
 from src.models.storage import storage_model
 from src.models.organization import organization_model
+from src.models.recipe import recipe_model
+
 from src.settings_manager import settings_manager
+
 from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException
-from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, ElementNotFoundException
+from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, EmptyLengthException
 
 class test_models(unittest.TestCase):
 
@@ -84,6 +87,19 @@ class test_models(unittest.TestCase):
       assert n1.full_name == "test1"
       assert n1.range.unit_name == "кг" and n1.range.conversion_factor == 500
       assert n1.range.base_range.unit_name == "грамм" and n1.range.base_range.conversion_factor == 1 
+
+   """
+   Проверить статические методы group_model
+   """
+   def test_staticmethod_group_model(self):
+      group1 = group_model.default_group_source()
+      group2 = group_model.default_group_cold()
+
+      assert isinstance(group1, group_model)
+      assert isinstance(group2, group_model)
+
+      assert group1.name == "Сырье"
+      assert group2.name == "Заморозка"
 
    """
    Проверить некорректные типы у атрибутов nomenclature_model
