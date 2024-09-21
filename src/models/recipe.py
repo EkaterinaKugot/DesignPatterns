@@ -22,7 +22,7 @@ class recipe_model(base_model_name):
     def nomenclatures(self, nomenclatures: list[nomenclature_model]):
         Validator.validate_type("nomenclatures", nomenclatures, list)
         for n in nomenclatures:
-            Validator.validate_type("nomenclatures", n, nomenclature_model)
+            Validator.validate_type("nomenclature", n, nomenclature_model)
         self.__nomenclatures = nomenclatures
 
     """
