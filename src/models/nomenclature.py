@@ -2,8 +2,6 @@ from src.core.base_model import base_model_id
 from src.models.group import group_model
 from src.models.range import range_model
 from src.errors.validator import Validator
-import os
-import re
 
 class nomenclature_model(base_model_id):
     __full_name: str = ""
