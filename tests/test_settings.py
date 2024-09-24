@@ -1,5 +1,5 @@
 import unittest
-from src.settings_manager import settings_manager
+from src.manager.settings_manager import settings_manager
 from src.models.settings import settings
 from src.errors.custom_exception import TypeException, RequiredLengthException
 

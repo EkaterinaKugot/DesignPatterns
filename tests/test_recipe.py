@@ -1,10 +1,10 @@
 import unittest
 from src.models.recipe import recipe_model
-from src.recipe_manager import recipe_manager
+from src.manager.recipe_manager import recipe_manager
 from src.models.nomenclature import nomenclature_model
 
 from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException
-from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, EmptyLengthException
+from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, EmptyArgumentException
 
 class test_recipe(unittest.TestCase):
 
@@ -33,13 +33,13 @@ class test_recipe(unittest.TestCase):
         with self.assertRaises(TypeException):
             manager1.open(123)  
 
-        with self.assertRaises(EmptyLengthException):
+        with self.assertRaises(EmptyArgumentException):
             manager1.open("")  
 
         with self.assertRaises(TypeException):
             manager1.recipe_directory = 567 
 
-        with self.assertRaises(EmptyLengthException):
+        with self.assertRaises(EmptyArgumentException):
             manager1.recipe_directory = ""
 
     """
@@ -60,13 +60,13 @@ class test_recipe(unittest.TestCase):
         with self.assertRaises(TypeException):
             rec.cooking_time = 999
 
-        with self.assertRaises(EmptyLengthException):
+        with self.assertRaises(EmptyArgumentException):
             rec.cooking_time = ""
 
         with self.assertRaises(TypeException):
             rec.cooking_steps = 44
 
-        with self.assertRaises(EmptyLengthException):
+        with self.assertRaises(EmptyArgumentException):
             rec.cooking_steps = ""
 
     """

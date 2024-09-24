@@ -47,7 +47,7 @@ class recipe_model(base_model_name):
     @cooking_time.setter
     def cooking_time(self, cooking_time: str):
         Validator.validate_type("cooking_time", cooking_time, str)
-        Validator.validate_empty_length("cooking_time", cooking_time)
+        Validator.validate_empty_argument("cooking_time", cooking_time)
         self.__cooking_time = cooking_time
 
     """
@@ -60,5 +60,5 @@ class recipe_model(base_model_name):
     @cooking_steps.setter
     def cooking_steps(self, cooking_steps: str):
         Validator.validate_type("cooking_steps", cooking_steps, str)
-        Validator.validate_empty_length("cooking_steps", cooking_steps)
+        Validator.validate_empty_argument("cooking_steps", cooking_steps)
         self.__cooking_steps = cooking_steps

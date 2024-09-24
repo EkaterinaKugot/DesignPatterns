@@ -1,6 +1,6 @@
 from src.models.recipe import recipe_model
 from src.models.nomenclature import nomenclature_model
-from src.nomenclature_manager import nomenclature_manager
+from src.manager.nomenclature_manager import nomenclature_manager
 from src.core.abstract_logic import abstract_logic
 from src.models.group import group_model
 from src.models.range import range_model
@@ -30,12 +30,12 @@ class recipe_manager(abstract_logic):
     @recipe_directory.setter
     def recipe_directory(self, recipe_directory: str):
         Validator.validate_type("recipe_directory", recipe_directory, str)
-        Validator.validate_empty_length("recipe_directory", recipe_directory)
+        Validator.validate_empty_argument("recipe_directory", recipe_directory)
         self.__recipe_directory = recipe_directory
 
     def open(self, file_name: str) -> None:
         Validator.validate_type("file_name", file_name, str)
-        Validator.validate_empty_length("file_name", file_name)
+        Validator.validate_empty_argument("file_name", file_name)
 
         ingredients, gram = self.__extract_columns_from_table(file_name)
         list = self.__create_list_nomenclature(ingredients, gram)
@@ -89,7 +89,7 @@ class recipe_manager(abstract_logic):
     def __create_list_nomenclature(self, ingredients: list[str], gram: list[list[int, str]]) -> list[nomenclature_model]:
         list = []
         for ingredient, g in zip(ingredients, gram):
-            nomenclature = nomenclature_manager.create(ingredient, range_model(g[1], g[0]))
+            nomenclature = nomenclature_manager.create(ingredient, range_model.create(g[1], g[0]))
             list.append(nomenclature)
         return list
     

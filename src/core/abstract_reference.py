@@ -6,10 +6,18 @@ from src.errors.validator import Validator
 Абстрактный класс для обработки моделей
 """
 class abstract_reference(ABC):
-    __name = ""
+    __name: str = ""
+    __id: int
 
     def __init__(self):
         self.__id = uuid.uuid1().int
+
+    """
+    Уникальный код
+    """
+    @property
+    def id(self) -> int:
+        return self.__id
 
     @property
     def name(self) -> str:

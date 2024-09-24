@@ -21,3 +21,6 @@ class base_model_name(abstract_reference):
     
     def __ne__(self, other) -> bool:
         return self.name != other.name
+    
+    def __str__(self) -> str:
+        return str(self.id)
