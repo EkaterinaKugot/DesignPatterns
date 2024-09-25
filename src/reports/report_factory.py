@@ -13,6 +13,7 @@ from src.models.settings import settings
 class report_factory(abstract_logic):
     __reports: dict = {}
     __settings_manager: settings_manager = None
+    __reports_setting: dict = {}
 
     def __init__(self, manager: settings_manager) -> None:
         super().__init__()
@@ -26,11 +27,45 @@ class report_factory(abstract_logic):
         self.__settings_manager = manager
 
     """
+    Форматы из настроек
+    """
+    @property
+    def reports_setting(self) -> dict:
+        return self.__reports_setting
+    
+    @reports_setting.setter
+    def reports_setting(self, reports_setting: dict):
+        Validator.validate_type("reports_setting", reports_setting, dict)
+        self.__reports_setting = reports_setting
+
+    """
+    Стандартные форматы
+    """
+    @property
+    def reports(self) -> dict:
+        return self.__reports
+    
+    @reports.setter
+    def reports(self, reports: dict):
+        Validator.validate_type("reports", reports, dict)
+        self.__reports = reports
+
+    """
     Текущие настройки
     """
     @property 
     def settings(self) -> settings:
         return self.__settings_manager.settings
+    
+    def load_formats_from_settings(self) -> None:
+        tmp_reports_setting = {}
+        for key, value in self.__settings_manager.format_to_class.items():
+            try:
+                tmp_reports_setting[format_reporting[key]] = value
+            except Exception as ex:
+                self.set_exception(ex)
+        self.reports_setting = tmp_reports_setting
+            
 
     def create(self, format: format_reporting) -> abstract_report:
         Validator.validate_type("format", format, format_reporting)

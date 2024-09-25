@@ -81,7 +81,7 @@ class test_settings(unittest.TestCase):
       # Подготовка
       manager1 = settings_manager()
 
-      with self.assertRaises(ArgumentException):
+      with self.assertRaises(TypeException):
             manager1.get_report_class(123)
 
    """

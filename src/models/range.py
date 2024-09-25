@@ -45,7 +45,7 @@ class range_model(base_model_name):
     
     def to_dict(self):
         return {
-            "base_range": self.base_range,
+            "base_range": self.base_range.to_dict() if self.base_range is not None else self.base_range,
             "conversion_factor": self.conversion_factor,
             "id": self.id,
             "name": self.name

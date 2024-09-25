@@ -8,6 +8,7 @@ from src.reports.json_report import json_report
 from src.reports.xml_report import xml_report
 from src.reports.rtf_report import rtf_report
 from src.manager.settings_manager import settings_manager
+from src.errors.custom_exception import TypeException
 import unittest
 import os 
 
@@ -33,16 +34,42 @@ class test_reporting(unittest.TestCase):
     def test_report_factory_create(self):
         # Подготовка
         set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
 
         # Действие
-        report = report_factory().create(format_reporting.CSV)
+        report = report_factory(set_manager).create(format_reporting.CSV)
 
         # Проверка
         assert report is not None
         assert isinstance(report, csv_report)
+
+    """
+    Проверка загрузки форматов из настроек у report_factory
+    """
+    def test_report_factory_load_formats(self):
+        # Подготовка
+        set_manager = settings_manager()
+        report_f = report_factory(set_manager)
+
+        # Действие
+        report_f.load_formats_from_settings()
+
+        # Проверка
+        assert len(report_f.reports_setting) != 0
+
+    """
+    Проверка некорректно заданные атрибуты
+    """
+    def test_report_factory_fail(self):
+        # Подготовка
+        set_manager = settings_manager()
+        report_f = report_factory(set_manager)
+
+        # Проверка
+        with self.assertRaises(TypeException):
+            report_f.reports = ["qwrt", 1]
+
+        with self.assertRaises(TypeException):
+            report_f.reports_setting = "trtr"
 
     """
     Проверка работы отчета CSV для range

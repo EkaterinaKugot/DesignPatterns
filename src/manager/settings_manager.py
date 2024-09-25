@@ -87,6 +87,7 @@ class settings_manager(abstract_logic):
         if format is None:
             format = self.__settings.report_format
 
+        Validator.validate_type("format", format, format_reporting)
         report_class = self.format_to_class.get(format.name, None)
         Validator.validate_not_none("report_class", report_class)
 
