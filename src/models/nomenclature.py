@@ -41,3 +41,12 @@ class nomenclature_model(base_model_id):
     def range(self, range: range_model):
         Validator.validate_type("range", range, range_model)
         self.__range = range
+
+    def to_dict(self):
+        return {
+            "full_name": self.full_name,
+            "group": self.group.to_dict(),
+            "id": self.id,
+            "name": self.name,
+            "range": self.range.to_dict()
+        }

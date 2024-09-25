@@ -8,3 +8,13 @@ class organization_model(base_model_name):
         self.bik = settings.bik
         self.account = settings.account
         self.type_property = settings.type_property
+
+    def to_dict(self):
+        return {
+            "account": self.account,
+            "bik": self.bik,
+            "id": self.id,
+            "inn": self.inn,
+            "name": self.name,
+            "type_property": self.type_property
+        }

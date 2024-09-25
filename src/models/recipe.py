@@ -62,3 +62,13 @@ class recipe_model(base_model_name):
         Validator.validate_type("cooking_steps", cooking_steps, str)
         Validator.validate_empty_argument("cooking_steps", cooking_steps)
         self.__cooking_steps = cooking_steps
+
+    def to_dict(self):
+        return {
+            "cooking_steps": self.cooking_steps,
+            "cooking_time": self.cooking_time,
+            "id": self.id,
+            "name": self.name,
+            "nomenclatures": self.nomenclatures,
+            "number_servings": self.number_servings
+        }

@@ -48,3 +48,13 @@ class abstract_reference(ABC):
     @abstractmethod
     def __ne__(self, other_model) -> bool:
         return self.id != other_model.id
+    
+    """
+    Абстрактный метод для преобразования в json
+    """
+    @abstractmethod
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }

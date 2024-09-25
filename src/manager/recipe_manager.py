@@ -11,7 +11,9 @@ import re
 
 class recipe_manager(abstract_logic):
     __recipe_directory: str = "./src/docs"
-    __recipe: recipe_model = recipe_model()
+
+    def __init__(self) -> None:
+        self.__recipe: recipe_model = recipe_model()
 
     """
     Рецепт
