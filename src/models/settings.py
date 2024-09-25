@@ -1,4 +1,7 @@
 from src.errors.validator import Validator
+from src.core.format_reporting import format_reporting
+from src.core.abstract_report import abstract_report
+
 """
 Настройки
 """
@@ -9,10 +12,10 @@ class settings:
     __сorrespondent_account = ""
     __bik = ""
     __type_property = ""
-
+    __report_format = format_reporting.CSV
 
     @property
-    def organization_name(self):
+    def organization_name(self) -> str:
         return self.__organization_name
     
     @organization_name.setter
@@ -21,7 +24,7 @@ class settings:
         self.__organization_name = organization_name.strip()
 
     @property
-    def inn(self):
+    def inn(self) -> str:
         return self.__inn
     
     @inn.setter
@@ -31,7 +34,7 @@ class settings:
         self.__inn = inn
 
     @property
-    def account(self):
+    def account(self) -> str:
         return self.__account
     
     @account.setter
@@ -41,7 +44,7 @@ class settings:
         self.__account = account
 
     @property
-    def сorrespondent_account(self):
+    def сorrespondent_account(self) -> str:
         return self.__сorrespondent_account
     
     @сorrespondent_account.setter
@@ -51,7 +54,7 @@ class settings:
         self.__сorrespondent_account = сorrespondent_account
 
     @property
-    def bik(self):
+    def bik(self) -> str:
         return self.__bik
     
     @bik.setter
@@ -61,7 +64,7 @@ class settings:
         self.__bik = bik
 
     @property
-    def type_property(self):
+    def type_property(self) -> str:
         return self.__type_property
     
     @type_property.setter
@@ -69,3 +72,12 @@ class settings:
         Validator.validate_type("type_property", type_property, str)
         Validator.validate_required_length("type_property", type_property, 5)
         self.__type_property = type_property
+
+    @property
+    def report_format(self) -> format_reporting:
+        return self.__report_format
+    
+    @report_format.setter
+    def report_format(self, report_format: format_reporting):
+        Validator.validate_type("report_format", report_format, format_reporting)
+        self.__report_format = report_format
