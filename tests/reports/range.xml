@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<report>
+    <item>
+        <base_range/>
+        <conversion_factor>1</conversion_factor>
+        <id>262026701062876281269697072672368902970</id>
+        <name>гр</name>
+    </item>
+    <item>
+        <base_range/>
+        <conversion_factor>1</conversion_factor>
+        <id>262026701142104443780524882275252454202</id>
+        <name>шт</name>
+    </item>
+    <item>
+        <base_range>262026701062876281269697072672368902970</base_range>
+        <conversion_factor>1000</conversion_factor>
+        <id>262026701221332606297984523804415771450</id>
+        <name>кг</name>
+    </item>
+</report>

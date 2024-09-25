@@ -1,0 +1,25 @@
+[
+    {
+        "base_range": null,
+        "conversion_factor": 1,
+        "id": 261973754545659411212666895045545313082,
+        "name": "гр"
+    },
+    {
+        "base_range": null,
+        "conversion_factor": 1,
+        "id": 261973754624887573724070602450778866490,
+        "name": "шт"
+    },
+    {
+        "base_range": {
+            "base_range": null,
+            "conversion_factor": 1,
+            "id": 261973754545659411212666895045545313082,
+            "name": "гр"
+        },
+        "conversion_factor": 1000,
+        "id": 261973754704115736240104010272949289786,
+        "name": "кг"
+    }
+]

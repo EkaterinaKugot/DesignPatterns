@@ -56,8 +56,8 @@ class test_models(unittest.TestCase):
       new_range = range_model.create("кг", 1000, base_range)
 
       # Проверка
-      assert new_range.unit_name == "кг" and new_range.conversion_factor == 1000
-      assert new_range.base_range.unit_name == "гр" and new_range.base_range.conversion_factor == 1
+      assert new_range.name == "кг" and new_range.conversion_factor == 1000
+      assert new_range.base_range.name == "гр" and new_range.base_range.conversion_factor == 1
 
    """
    Проверить создание organization_model
@@ -86,8 +86,8 @@ class test_models(unittest.TestCase):
 
       # Проверка
       assert n1.full_name == "test1"
-      assert n1.range.unit_name == "кг" and n1.range.conversion_factor == 500
-      assert n1.range.base_range.unit_name == "гр" and n1.range.base_range.conversion_factor == 1 
+      assert n1.range.name == "кг" and n1.range.conversion_factor == 500
+      assert n1.range.base_range.name == "гр" and n1.range.base_range.conversion_factor == 1 
 
    """
    Проверить статические методы group_model
@@ -139,7 +139,7 @@ class test_models(unittest.TestCase):
    """
    def test_type_range_fail(self):
       with self.assertRaises(TypeException):
-         range_model().unit_name = 123
+         range_model().name = 123
 
       with self.assertRaises(TypeException):
          range_model().conversion_factor = "qwer"
@@ -169,7 +169,7 @@ class test_models(unittest.TestCase):
       assert isinstance(nomenclature, nomenclature_model)
       assert nomenclature.full_name == ingredient
       assert nomenclature.group.name == "Сырье"
-      assert nomenclature.range.unit_name == "гр"
+      assert nomenclature.range.name == "гр"
       assert nomenclature.range.conversion_factor == 5
 
 

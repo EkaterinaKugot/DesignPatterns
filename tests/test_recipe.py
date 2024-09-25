@@ -18,7 +18,7 @@ class test_recipe(unittest.TestCase):
 
         assert len(manager1.recipe.nomenclatures) != 0
         assert manager1.recipe.nomenclatures[0].full_name == "Пшеничная мука"
-        assert manager1.recipe.nomenclatures[0].range.unit_name == "гр"
+        assert manager1.recipe.nomenclatures[0].range.name == "гр"
         assert manager1.recipe.nomenclatures[0].range.conversion_factor == 100
         assert manager1.recipe.nomenclatures[0].group.name == "Сырье"
         assert manager1.recipe.number_servings == 10

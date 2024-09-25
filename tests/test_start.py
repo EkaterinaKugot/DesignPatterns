@@ -49,10 +49,10 @@ class test_start(unittest.TestCase):
         start.create()
 
         # Действие
-        found = list(filter(lambda x: x.unit_name == "гр", reposity.data[data_reposity.range_key()]  ))
-        print(found)
+        found = list(filter(lambda x: x.name == "гр", reposity.data[data_reposity.range_key()]  ))
+        
         # Проверки
-        assert len(found) > 1
+        assert len(found) == 1
 
 
     """
@@ -73,8 +73,19 @@ class test_start(unittest.TestCase):
         assert found[0].range is not None
         assert found[0].group is not None
 
+    """
+    Проверить создание ключей
+    """
+    def test_keys(self):
+        data = data_reposity()
 
+        assert data.group_key() == "group"
+        assert data.nomenclature_key() == "nomenclature"
+        assert data.range_key() == "range"
+        assert data.recipe_key() == "recipe"
 
+if __name__ == '__main__':
+    unittest.main() 
 
 
 
