@@ -4,5 +4,8 @@ from enum import Enum
 Форматы отчетов
 """
 class format_reporting(Enum):
-    CSV = 1
-    MARKDOWN = 2
+    CSV = "CSV"
+    MARKDOWN = "MARKDOWN"
+    JSON = "JSON"
+    XML = "XML"
+    RTF = "RTF"

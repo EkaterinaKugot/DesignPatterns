@@ -29,7 +29,7 @@ class Validator:
     def validate_not_none(argument_name: str, value):
         """Проверяет, что значение не равно None"""
         if value is None:
-            raise ArgumentException(argument_name)
+            raise ArgumentException(argument_name, value)
         
     @staticmethod
     def validate_empty_argument(argument_name: str, value):

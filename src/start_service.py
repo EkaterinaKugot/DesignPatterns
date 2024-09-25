@@ -56,13 +56,13 @@ class start_service(abstract_logic):
     Сформировать рецепты
     """
     def __create_receipts(self): 
-        list = []
-        manager1 = recipe_manager()
-        md_files = [f for f in os.listdir(manager1.recipe_directory) if f.endswith('.md')]
+        recipe_list = []
+        md_files = [f for f in os.listdir(recipe_manager().recipe_directory) if f.endswith('.md')]
         for md_file in md_files:
-            manager1.open(md_file)
-            list.append(manager1.recipe)
-        self.__reposity.data[data_reposity.recipe_key()] = list
+            manager = recipe_manager()
+            manager.open(md_file)
+            recipe_list.append(manager.recipe)
+        self.__reposity.data[data_reposity.recipe_key()] = recipe_list
     
     """
     Первый старт
