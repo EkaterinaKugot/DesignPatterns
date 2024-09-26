@@ -1,10 +1,10 @@
 import unittest
 from src.models.recipe import recipe_model
-from src.recipe_manager import recipe_manager
+from src.manager.recipe_manager import recipe_manager
 from src.models.nomenclature import nomenclature_model
 
 from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException
-from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, EmptyLengthException
+from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, EmptyArgumentException
 
 class test_recipe(unittest.TestCase):
 
@@ -18,7 +18,7 @@ class test_recipe(unittest.TestCase):
 
         assert len(manager1.recipe.nomenclatures) != 0
         assert manager1.recipe.nomenclatures[0].full_name == "Пшеничная мука"
-        assert manager1.recipe.nomenclatures[0].range.unit_name == "гр"
+        assert manager1.recipe.nomenclatures[0].range.name == "гр"
         assert manager1.recipe.nomenclatures[0].range.conversion_factor == 100
         assert manager1.recipe.nomenclatures[0].group.name == "Сырье"
         assert manager1.recipe.number_servings == 10
@@ -33,13 +33,13 @@ class test_recipe(unittest.TestCase):
         with self.assertRaises(TypeException):
             manager1.open(123)  
 
-        with self.assertRaises(EmptyLengthException):
+        with self.assertRaises(EmptyArgumentException):
             manager1.open("")  
 
         with self.assertRaises(TypeException):
             manager1.recipe_directory = 567 
 
-        with self.assertRaises(EmptyLengthException):
+        with self.assertRaises(EmptyArgumentException):
             manager1.recipe_directory = ""
 
     """
@@ -60,13 +60,13 @@ class test_recipe(unittest.TestCase):
         with self.assertRaises(TypeException):
             rec.cooking_time = 999
 
-        with self.assertRaises(EmptyLengthException):
+        with self.assertRaises(EmptyArgumentException):
             rec.cooking_time = ""
 
         with self.assertRaises(TypeException):
             rec.cooking_steps = 44
 
-        with self.assertRaises(EmptyLengthException):
+        with self.assertRaises(EmptyArgumentException):
             rec.cooking_steps = ""
 
     """

@@ -10,6 +10,9 @@ class base_model_id(abstract_reference):
     def __ne__(self, other) -> bool:
         return super().__ne__(other)
     
+    def to_dict(self):
+        return super().to_dict()
+    
 """
 Базовый класс для наследования с поддержкой сравнения по наименованию
 """   
@@ -21,3 +24,9 @@ class base_model_name(abstract_reference):
     
     def __ne__(self, other) -> bool:
         return self.name != other.name
+    
+    def __str__(self) -> str:
+        return str(self.id)
+    
+    def to_dict(self):
+        return super().to_dict()

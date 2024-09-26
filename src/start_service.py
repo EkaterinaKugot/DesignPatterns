@@ -1,13 +1,12 @@
-from src.core import abstract_logic
+from src.core.abstract_logic import abstract_logic
 from src.data_reposity import data_reposity
 from src.errors.validator import Validator
 from src.models.group import group_model
 from src.models.range import range_model
-from src.settings_manager import settings_manager
 from src.models.settings import settings
-from src.recipe_manager import recipe_manager
+from src.manager.settings_manager import settings_manager
+from src.manager.recipe_manager import recipe_manager
 import os
-
 
 class start_service(abstract_logic):
     __reposity: data_reposity = None
@@ -15,7 +14,7 @@ class start_service(abstract_logic):
     
 
     def __init__(self, reposity: data_reposity, manager: settings_manager) -> None:
-        super.__init__()
+        super().__init__()
         Validator.validate_type("reposity", reposity, data_reposity)
         Validator.validate_type("manager", manager, settings_manager)
         self.__reposity = reposity
@@ -47,30 +46,36 @@ class start_service(abstract_logic):
     """
     def __create_range(self): 
         list = []
-        list.append(range_model("кг", 1000, range_model()))
-        list.append(range_model("шт", 10, range_model("шт", 1)))
+        base_gramm = range_model.create("гр", 1)
+        list.append(base_gramm)
+        list.append(range_model.create("шт", 1))
+        list.append(range_model.create("кг", 1000, base_gramm))
         self.__reposity.data[data_reposity.range_key()] = list
 
     """
     Сформировать рецепты
     """
     def __create_receipts(self): 
-        list = []
-        manager1 = recipe_manager()
-        md_files = [f for f in os.listdir(manager1.recipe_directory) if f.endswith('.md')]
+        recipe_list = []
+        md_files = [f for f in os.listdir(recipe_manager().recipe_directory) if f.endswith('.md')]
         for md_file in md_files:
-            manager1.open(md_file)
-            list.append(manager1.recipe)
-        self.__reposity.data[data_reposity.recipe_key()] = list
+            manager = recipe_manager()
+            manager.open(md_file)
+            recipe_list.append(manager.recipe)
+        self.__reposity.data[data_reposity.recipe_key()] = recipe_list
     
     """
     Первый старт
     """
     def create(self):
-        self.__create_nomenclature_groups()
-        self.__create_nomenclature()
-        self.__create_range()
-        self.__create_receipts()
+        try:
+            self.__create_nomenclature_groups()
+            self.__create_nomenclature()
+            self.__create_range()
+            self.__create_receipts()
+            return True
+        except:
+            return False
 
     """
     Перегрузка абстрактного метода

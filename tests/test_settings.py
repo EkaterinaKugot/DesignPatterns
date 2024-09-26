@@ -1,7 +1,8 @@
 import unittest
-from src.settings_manager import settings_manager
+from src.manager.settings_manager import settings_manager
 from src.models.settings import settings
-from src.errors.custom_exception import TypeException, RequiredLengthException
+from src.reports.csv_report import csv_report
+from src.errors.custom_exception import TypeException, RequiredLengthException, ArgumentException
 
 """
 Набор тестов для проверки работы с настройками
@@ -51,6 +52,19 @@ class test_settings(unittest.TestCase):
       assert manager1.current_settings.organization_name == manager2.current_settings.organization_name   
 
    """
+   Проверить получение класса формата отчета
+   """
+   def test_get_report_class(self):
+      # Подготовка
+      manager = settings_manager()
+
+      report_class = manager.get_report_class()
+
+      # Проверки
+      assert isinstance(report_class, csv_report)
+ 
+
+   """
    Проверить некорректное имя файла с настройками
    """
    def test_file_name_fail(self):
@@ -59,6 +73,16 @@ class test_settings(unittest.TestCase):
 
       with self.assertRaises(TypeException):
             manager1.open(123)
+
+   """
+   Проверить некорректный формат отчета
+   """
+   def test_format_report_fail(self):
+      # Подготовка
+      manager1 = settings_manager()
+
+      with self.assertRaises(TypeException):
+            manager1.get_report_class(123)
 
    """
    Проверить некорректный тип атрибутов
@@ -84,6 +108,9 @@ class test_settings(unittest.TestCase):
             
       with self.assertRaises(TypeException):
             sets.type_property = 543
+
+      with self.assertRaises(TypeException):
+            sets.report_format = "kate"
 
    """
    Проверить некорректную длину атрибутов

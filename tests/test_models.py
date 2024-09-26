@@ -4,12 +4,12 @@ from src.models.range import range_model
 from src.models.group import group_model
 from src.models.storage import storage_model
 from src.models.organization import organization_model
-from src.models.recipe import recipe_model
+from src.manager.nomenclature_manager import nomenclature_manager
 
-from src.settings_manager import settings_manager
+from src.manager.settings_manager import settings_manager
 
 from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException
-from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, EmptyLengthException
+from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, EmptyArgumentException
 
 class test_models(unittest.TestCase):
 
@@ -52,12 +52,12 @@ class test_models(unittest.TestCase):
    """
    def test_range_model(self):
       # Подготовка
-      base_range = range_model("грамм", 1)
-      new_range = range_model("кг", 1000, base_range)
+      base_range = range_model.create("гр", 1)
+      new_range = range_model.create("кг", 1000, base_range)
 
       # Проверка
-      assert new_range.unit_name == "кг" and new_range.conversion_factor == 1000
-      assert new_range.base_range.unit_name == "грамм" and new_range.base_range.conversion_factor == 1
+      assert new_range.name == "кг" and new_range.conversion_factor == 1000
+      assert new_range.base_range.name == "гр" and new_range.base_range.conversion_factor == 1
 
    """
    Проверить создание organization_model
@@ -81,12 +81,13 @@ class test_models(unittest.TestCase):
       # Подготовка
       n1 = nomenclature_model()
       n1.full_name = "test1"
-      n1.range = range_model("кг", 500, range_model())
+      base_range = range_model.create("гр", 1)
+      n1.range = range_model.create("кг", 500, base_range)
 
       # Проверка
       assert n1.full_name == "test1"
-      assert n1.range.unit_name == "кг" and n1.range.conversion_factor == 500
-      assert n1.range.base_range.unit_name == "грамм" and n1.range.base_range.conversion_factor == 1 
+      assert n1.range.name == "кг" and n1.range.conversion_factor == 500
+      assert n1.range.base_range.name == "гр" and n1.range.base_range.conversion_factor == 1 
 
    """
    Проверить статические методы group_model
@@ -138,19 +139,38 @@ class test_models(unittest.TestCase):
    """
    def test_type_range_fail(self):
       with self.assertRaises(TypeException):
-         base_range = range_model(678, 1)
+         range_model().name = 123
 
       with self.assertRaises(TypeException):
-         base_range = range_model("грамм", "ooo")
+         range_model().conversion_factor = "qwer"
+
+      base_range = range_model.create("грамм", 1000)
+      with self.assertRaises(PermissibleValueException):
+         range_model.create("кг", 1, base_range)
+
 
    """
    Проверить некорректный коэффициентом пересчета range_model
    """
    def test_conversion_factor_range_fail(self):
-      base_range = range_model("грамм", 1000)
+      base_range = range_model.create("грамм", 1000)
       
       with self.assertRaises(PermissibleValueException):
-          new_range = range_model("кг", 1, base_range)
+         new_range = range_model.create("кг", 1, base_range)
+
+   """
+   Проверка создания nomenclature в nomenclature_model
+   """
+   def test_create_nomenclature(self):
+      # Подготовка
+      ingredient = "Ванилин"
+      nomenclature = nomenclature_manager.create(ingredient, range_model.create("гр", 5))
+
+      assert isinstance(nomenclature, nomenclature_model)
+      assert nomenclature.full_name == ingredient
+      assert nomenclature.group.name == "Сырье"
+      assert nomenclature.range.name == "гр"
+      assert nomenclature.range.conversion_factor == 5
 
 
 if __name__ == '__main__':

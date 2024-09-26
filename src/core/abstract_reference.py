@@ -6,10 +6,18 @@ from src.errors.validator import Validator
 Абстрактный класс для обработки моделей
 """
 class abstract_reference(ABC):
-    __name = ""
+    __name: str = ""
+    __id: int
 
     def __init__(self):
         self.__id = uuid.uuid1().int
+
+    """
+    Уникальный код
+    """
+    @property
+    def id(self) -> int:
+        return self.__id
 
     @property
     def name(self) -> str:
@@ -40,3 +48,13 @@ class abstract_reference(ABC):
     @abstractmethod
     def __ne__(self, other_model) -> bool:
         return self.id != other_model.id
+    
+    """
+    Абстрактный метод для преобразования в json
+    """
+    @abstractmethod
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }
