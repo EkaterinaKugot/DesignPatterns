@@ -3,19 +3,19 @@
     <item>
         <base_range/>
         <conversion_factor>1</conversion_factor>
-        <id>157017101285262314181697145317005345594</id>
+        <id>204116756471488544544898002225062888250</id>
         <name>гр</name>
     </item>
     <item>
         <base_range/>
         <conversion_factor>1</conversion_factor>
-        <id>157017101364490476694930721545834873658</id>
+        <id>204116756550716707061673941035796022074</id>
         <name>шт</name>
     </item>
     <item>
-        <base_range>157017101285262314181697145317005345594</base_range>
+        <base_range>&lt;src.models.range.range_model object at 0x0000023F9D8187F0&gt;</base_range>
         <conversion_factor>1000</conversion_factor>
-        <id>157017101443718639206087012446539760442</id>
+        <id>204116756629944869576162614185778365242</id>
         <name>кг</name>
     </item>
 </report>

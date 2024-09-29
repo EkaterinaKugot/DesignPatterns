@@ -18,7 +18,12 @@ class xml_report(abstract_report):
         Validator.validate_empty_argument("data", data)
         
         first_model = data[0]
-        fields = list(filter(lambda x: not x.startswith("_") and not callable(getattr(first_model.__class__, x)), dir(first_model) ))
+        fields = list(
+            filter(
+                lambda x: not x.startswith("_") and x != "attribute_class" and
+                not callable(getattr(first_model.__class__, x)), dir(first_model)
+                )
+            )
         root = ET.Element("report")
         
         # Данные

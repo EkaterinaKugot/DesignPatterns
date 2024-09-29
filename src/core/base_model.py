@@ -13,6 +13,10 @@ class base_model_id(abstract_reference):
     def to_dict(self):
         return super().to_dict()
     
+    @property
+    def attribute_class(self) -> dict:
+        return {}
+    
 """
 Базовый класс для наследования с поддержкой сравнения по наименованию
 """   
@@ -30,3 +34,7 @@ class base_model_name(abstract_reference):
     
     def to_dict(self):
         return super().to_dict()
+    
+    @property
+    def attribute_class(self) -> dict:
+        return {}

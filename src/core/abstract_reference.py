@@ -8,6 +8,7 @@ from src.errors.validator import Validator
 class abstract_reference(ABC):
     __name: str = ""
     __id: int
+    # __attribute_class = {}
 
     def __init__(self):
         self.__id = uuid.uuid1().int
@@ -18,7 +19,15 @@ class abstract_reference(ABC):
     @property
     def id(self) -> int:
         return self.__id
-
+    
+    @id.setter
+    def id(self, id: int):
+        Validator.validate_type("id", id, int)
+        self.__id = id
+    
+    """
+    Имя
+    """
     @property
     def name(self) -> str:
         return self.__name
@@ -29,9 +38,13 @@ class abstract_reference(ABC):
         Validator.validate_permissible_length("name", name, 50)
         self.__name = name.strip()
 
+    """
+    Класс у аттрибута
+    """
     @property
-    def id(self) -> int:
-        return self.__id
+    @abstractmethod
+    def attribute_class(self) -> dict:
+        pass
 
     """
     Абстрактный метод для сравнения равенства
@@ -58,3 +71,4 @@ class abstract_reference(ABC):
             "id": self.id,
             "name": self.name,
         }
+    

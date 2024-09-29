@@ -9,6 +9,11 @@ from src.reports.xml_report import xml_report
 from src.reports.rtf_report import rtf_report
 from src.manager.settings_manager import settings_manager
 from src.errors.custom_exception import TypeException
+from src.models.range import range_model
+from src.models.nomenclature import nomenclature_model
+from src.models.recipe import recipe_model
+from src.models.group import group_model
+from src.reports.json_deserializer import json_deserializer
 import unittest
 import os 
 
@@ -16,6 +21,17 @@ import os
 Набор тестов для проверки работы формирования отчетов
 """
 class test_reporting(unittest.TestCase):
+
+    set_manager = settings_manager()
+    reposity = data_reposity()
+    start = start_service(reposity, set_manager)
+    start.create()
+
+    report_csv = csv_report()
+    report_md = md_report()
+    report_json = json_report()
+    report_xml = xml_report()
+    report_rtf = rtf_report()
 
     __reports_path = "./tests/reports"
 
@@ -75,463 +91,372 @@ class test_reporting(unittest.TestCase):
     Проверка работы отчета CSV для range
     """
     def test_csv_report_create_range(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = csv_report()
-
+        self.assertIsNotNone(self.reposity)
         # Действие
-        report.create(reposity.data[data_reposity.range_key()])
+        self.report_csv.create(self.reposity.data[data_reposity.range_key()])
 
         # Проверка
-        assert report.result != ""
+        assert self.report_csv.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.range_key()}.csv"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_csv.result)
     
     """
     Проверка работы отчета CSV для nomenclature
     """
     def test_csv_report_create_nomenclature(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = csv_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.nomenclature_key()])
+        self.report_csv.create(self.reposity.data[data_reposity.nomenclature_key()])
 
         # Проверка
-        assert report.result != ""
+        assert self.report_csv.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.nomenclature_key()}.csv"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_csv.result)
 
     """
     Проверка работы отчета CSV для group
     """
     def test_csv_report_create_group(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = csv_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.group_key()])
+        self.report_csv.create(self.reposity.data[data_reposity.group_key()])
 
         # Проверка
-        assert report.result != ""
+        assert self.report_csv.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.group_key()}.csv"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_csv.result)
+        print(self.report_csv.result)
     
     """
     Проверка работы отчета CSV для recipe
     """
     def test_csv_report_create_recipe(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = csv_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.recipe_key()])
+        self.report_csv.create(self.reposity.data[data_reposity.recipe_key()])
 
         # Проверка
-        assert report.result != ""
+        assert self.report_csv.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.recipe_key()}.csv"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_csv.result)
 
 
     """
     Проверка работы отчета md для range
     """
     def test_md_report_create_range(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = md_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.range_key()])
+        self.report_md.create(self.reposity.data[data_reposity.range_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_md.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.range_key()}.md"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_md.result)
 
     """
     Проверка работы отчета md для nomenclature
     """
     def test_md_report_create_nomenclature(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = md_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.nomenclature_key()])
+        self.report_md.create(self.reposity.data[data_reposity.nomenclature_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_md.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.nomenclature_key()}.md"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_md.result)
 
     """
     Проверка работы отчета md для group
     """
     def test_md_report_create_group(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = md_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.group_key()])
+        self.report_md.create(self.reposity.data[data_reposity.group_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_md.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.group_key()}.md"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_md.result)
 
     """
     Проверка работы отчета md для recipe
     """
     def test_md_report_create_recipe(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = md_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.recipe_key()])
+        self.report_md.create(self.reposity.data[data_reposity.recipe_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_md.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.recipe_key()}.md"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_md.result)
 
     """
     Проверка работы отчета json для range
     """
-    def test_json_report_create_range(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = json_report()
-
+    def __json_report_create_range(self):
         # Действие
-        report.create(reposity.data[data_reposity.range_key()])
+        self.report_json.create(self.reposity.data[data_reposity.range_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_json.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.range_key()}.json"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_json.result)
 
 
     """
     Проверка работы отчета json для nomenclature
     """
-    def test_json_report_create_nomenclature(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = json_report()
-
+    def __json_report_create_nomenclature(self):
         # Действие
-        report.create(reposity.data[data_reposity.nomenclature_key()])
+        self.report_json.create(self.reposity.data[data_reposity.nomenclature_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_json.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.nomenclature_key()}.json"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_json.result)
 
     """
     Проверка работы отчета json для group
     """
-    def test_json_report_create_group(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = json_report()
-
+    def __json_report_create_group(self):
         # Действие
-        report.create(reposity.data[data_reposity.group_key()])
+        self.report_json.create(self.reposity.data[data_reposity.group_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_json.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.group_key()}.json"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_json.result)
 
     """
     Проверка работы отчета json для recipe
     """
-    def test_json_report_create_recipe(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = json_report()
-
-        # Действие
-        report.create(reposity.data[data_reposity.recipe_key()])
+    def __json_report_create_recipe(self):
+        ## Действие
+        self.report_json.create(self.reposity.data[data_reposity.recipe_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_json.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.recipe_key()}.json"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_json.result)
 
     """
     Проверка работы отчета xml для range
     """
     def test_xml_report_create_range(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = xml_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.range_key()])
+        self.report_xml.create(self.reposity.data[data_reposity.range_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_xml.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.range_key()}.xml"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_xml.result)
 
 
     """
     Проверка работы отчета xml для nomenclature
     """
     def test_xml_report_create_nomenclature(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = xml_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.nomenclature_key()])
+        self.report_xml.create(self.reposity.data[data_reposity.nomenclature_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_xml.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.nomenclature_key()}.xml"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_xml.result)
 
     """
     Проверка работы отчета xml для group
     """
     def test_xml_report_create_group(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = xml_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.group_key()])
+        self.report_xml.create(self.reposity.data[data_reposity.group_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_xml.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.group_key()}.xml"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_xml.result)
 
     """
     Проверка работы отчета xml для recipe
     """
     def test_xml_report_create_recipe(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = xml_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.recipe_key()])
+        self.report_xml.create(self.reposity.data[data_reposity.recipe_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_xml.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.recipe_key()}.xml"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_xml.result)
 
     """
     Проверка работы отчета rtf для range
     """
     def test_rtf_report_create_range(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = rtf_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.range_key()])
+        self.report_rtf.create(self.reposity.data[data_reposity.range_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_rtf.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.range_key()}.rtf"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_rtf.result)
 
 
     """
     Проверка работы отчета rtf для nomenclature
     """
     def test_rtf_report_create_nomenclature(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = rtf_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.nomenclature_key()])
+        self.report_rtf.create(self.reposity.data[data_reposity.nomenclature_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_rtf.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.nomenclature_key()}.rtf"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_rtf.result)
 
     """
     Проверка работы отчета rtf для group
     """
     def test_rtf_report_create_group(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = rtf_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.group_key()])
+        self.report_rtf.create(self.reposity.data[data_reposity.group_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_rtf.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.group_key()}.rtf"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_rtf.result)
 
     """
     Проверка работы отчета rtf для recipe
     """
     def test_rtf_report_create_recipe(self):
-        # Подготовка
-        set_manager = settings_manager()
-        reposity = data_reposity()
-        start = start_service(reposity, set_manager)
-        start.create()
-
-        report = rtf_report()
-
         # Действие
-        report.create(reposity.data[data_reposity.recipe_key()])
+        self.report_rtf.create(self.reposity.data[data_reposity.recipe_key()])
 
         # Проверка
-        print(report.result)
-        assert report.result != ""
+        assert self.report_rtf.result != ""
 
         self.__check_folder_exists()
         file_name = f"{data_reposity.recipe_key()}.rtf"
-        self.__save_file(file_name, report.result)
+        self.__save_file(file_name, self.report_rtf.result)
 
+        """
+    Проверка десериализации данных из JSON для group
+    """
+    def test_des_json_group(self):
+        # Подготовка
+        self.__json_report_create_group()
+        file_name = "group.json"
+        deserializer = json_deserializer(group_model)
+        group_data = self.reposity.data[data_reposity.group_key()]
 
+        # Действие
+        objects = deserializer.deserialize(file_name)
+
+        # Проверка
+        assert len(objects) != 0
+
+        for i, j in zip(objects, group_data):
+            assert i == j
+
+        assert objects[1] != group_data[0]
+
+    """
+    Проверка десериализации данных из JSON для range
+    """
+    def test_des_json_range(self):
+        # Подготовка
+        self.__json_report_create_range()
+        file_name = "range.json"
+        deserializer = json_deserializer(range_model)
+        range_data = self.reposity.data[data_reposity.range_key()]
+
+        # Действие
+        objects = deserializer.deserialize(file_name)
+
+        # Проверка
+        assert len(objects) != 0
+
+        for i, j in zip(objects, range_data):
+            assert i == j
+
+        assert objects[1] != range_data[0]
+
+    
+    """
+    Проверка десериализации данных из JSON для nomenclature
+    """
+    def test_des_json_nomenclature(self):
+        # Подготовка
+        self.__json_report_create_nomenclature()
+        file_name = "nomenclature.json"
+        deserializer = json_deserializer(nomenclature_model)
+        nomenclature_data = self.reposity.data[data_reposity.nomenclature_key()]
+
+        # Действие
+        objects = deserializer.deserialize(file_name)
+
+        # Проверка
+        assert len(objects) != 0
+
+        for i, j in zip(objects, nomenclature_data):
+            assert i == j
+
+        assert objects[1] != nomenclature_data[0] 
+
+    """
+    Проверка десериализации данных из JSON для recipe
+    """
+    def test_des_json_recipe(self):
+        # Подготовка
+        self.__json_report_create_recipe()
+        file_name = "recipe.json"
+        deserializer = json_deserializer(recipe_model)
+        recipe_data = self.reposity.data[data_reposity.recipe_key()]
+
+        # Действие
+        objects = deserializer.deserialize(file_name)
+
+        # Проверка
+        assert len(objects) != 0
+
+        for i, j in zip(objects, recipe_data):
+            assert i == j
+
+        assert objects[1] != recipe_data[0] 
 
 
 if __name__ == '__main__':

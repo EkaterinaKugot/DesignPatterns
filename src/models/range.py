@@ -1,10 +1,10 @@
-from src.core.base_model import base_model_name
+from src.core.base_model import base_model_id
 from src.errors.validator import Validator
 
 """
 Модель единицы измерения
 """
-class range_model(base_model_name):
+class range_model(base_model_id):
     __conversion_factor: int = 1
     __base_range: range = None
 
@@ -29,8 +29,11 @@ class range_model(base_model_name):
     
     @base_range.setter
     def base_range(self, base_range: 'range_model'):
-        Validator.validate_type("base_range", base_range, range_model)
-        self.__base_range = base_range
+        if base_range is None:
+            self.__base_range = base_range
+        else:
+            Validator.validate_type("base_range", base_range, range_model)
+            self.__base_range = base_range
 
     @staticmethod
     def create(name: str, conversion_factor: int, base_range: 'range_model' = None) -> 'range_model':
@@ -43,6 +46,9 @@ class range_model(base_model_name):
             
         return item
     
+    """
+    Переопределение метода для преобразования в json
+    """
     def to_dict(self):
         return {
             "base_range": self.base_range.to_dict() if self.base_range is not None else self.base_range,
@@ -50,3 +56,10 @@ class range_model(base_model_name):
             "id": self.id,
             "name": self.name
         }
+    
+    """
+    Переопределение получения аттрибутов и класса
+    """
+    @property
+    def attribute_class(self) -> int:
+        return {"base_range": range_model}

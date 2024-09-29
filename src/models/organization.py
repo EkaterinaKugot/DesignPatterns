@@ -9,6 +9,9 @@ class organization_model(base_model_name):
         self.account = settings.account
         self.type_property = settings.type_property
 
+    """
+    Переопределение метода для преобразования в json
+    """
     def to_dict(self):
         return {
             "account": self.account,

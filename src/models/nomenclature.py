@@ -42,6 +42,9 @@ class nomenclature_model(base_model_id):
         Validator.validate_type("range", range, range_model)
         self.__range = range
 
+    """
+    Переопределение метода для преобразования в json
+    """
     def to_dict(self):
         return {
             "full_name": self.full_name,
@@ -50,3 +53,13 @@ class nomenclature_model(base_model_id):
             "name": self.name,
             "range": self.range.to_dict()
         }
+    
+    """
+    Переопределение получения аттрибутов и класса
+    """
+    @property
+    def attribute_class(self) -> dict:
+        return {
+            "group": group_model,
+            "range": range_model
+            }
