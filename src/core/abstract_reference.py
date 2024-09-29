@@ -8,7 +8,6 @@ from src.errors.validator import Validator
 class abstract_reference(ABC):
     __name: str = ""
     __id: int
-    # __attribute_class = {}
 
     def __init__(self):
         self.__id = uuid.uuid1().int
