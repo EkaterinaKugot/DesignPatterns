@@ -3,6 +3,7 @@ import json
 import glob
 from src.core.abstract_reference import abstract_reference
 from src.core.abstract_logic import abstract_logic
+from src.core.abstract_report import abstract_report
 
 """
 Класс для десериализации json отчета обратно в объекты
@@ -11,19 +12,20 @@ class json_deserializer(abstract_logic):
 
     def __init__(self, model_class) -> None:
         self.model_class = model_class
+        self.model_objects: list = None
 
-    @staticmethod
-    def file_search(file_name: str) -> bool:
+    """
+    Десериализации данных из JSON
+    """
+    def open(self, file_name: str):
         Validator.validate_type("file_name", file_name, str)
 
-        path = f"./**/{file_name}"
-        full_path = glob.glob(path, recursive=True)[0]
-
-        Validator.validate_not_none("full_path", full_path)
-        Validator.validate_empty_argument("full_path", full_path)
-
-        return full_path
-
+        try:
+            return self.deserialize(file_name)
+        except Exception as ex:
+            self.set_exception(ex)
+            return False
+    
     """
     Десериализации данных из JSON
     """
@@ -39,11 +41,11 @@ class json_deserializer(abstract_logic):
         objects = []
         
         for item in data_list:
-            model_class = self.model_class
-            obj = self.__deserialize_model(item, model_class)
+            obj = self.__deserialize_model(item, self.model_class)
             objects.append(obj)
         
-        return objects
+        self.model_objects = objects
+        return True
 
     """
     Заполнение модели данными

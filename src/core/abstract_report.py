@@ -34,3 +34,13 @@ class abstract_report(ABC):
     def result(self, value: str):
         Validator.validate_type("value", value, str)
         self.__result = value
+
+    @staticmethod
+    def get_class_fields(first_model) -> list:
+        fields = list(
+            filter(
+                lambda x: not x.startswith("_") and x != "attribute_class" and
+                not callable(getattr(first_model.__class__, x)), dir(first_model)
+                )
+            )
+        return fields

@@ -373,7 +373,7 @@ class test_reporting(unittest.TestCase):
         file_name = f"{data_reposity.recipe_key()}.rtf"
         self.__save_file(file_name, self.report_rtf.result)
 
-        """
+    """
     Проверка десериализации данных из JSON для group
     """
     def test_des_json_group(self):
@@ -384,15 +384,15 @@ class test_reporting(unittest.TestCase):
         group_data = self.reposity.data[data_reposity.group_key()]
 
         # Действие
-        objects = deserializer.deserialize(file_name)
+        deserializer.open(file_name)
 
         # Проверка
-        assert len(objects) != 0
+        assert len(deserializer.model_objects) != 0
 
-        for i, j in zip(objects, group_data):
-            assert i == j
+        for object, data in zip(deserializer.model_objects, group_data):
+            assert object == data
 
-        assert objects[1] != group_data[0]
+        assert deserializer.model_objects[1] != group_data[0]
 
     """
     Проверка десериализации данных из JSON для range
@@ -405,15 +405,15 @@ class test_reporting(unittest.TestCase):
         range_data = self.reposity.data[data_reposity.range_key()]
 
         # Действие
-        objects = deserializer.deserialize(file_name)
+        deserializer.open(file_name)
 
         # Проверка
-        assert len(objects) != 0
+        assert len(deserializer.model_objects) != 0
 
-        for i, j in zip(objects, range_data):
-            assert i == j
+        for object, data in zip(deserializer.model_objects, range_data):
+            assert object == data
 
-        assert objects[1] != range_data[0]
+        assert deserializer.model_objects[1] != range_data[0]
 
     
     """
@@ -427,15 +427,15 @@ class test_reporting(unittest.TestCase):
         nomenclature_data = self.reposity.data[data_reposity.nomenclature_key()]
 
         # Действие
-        objects = deserializer.deserialize(file_name)
+        deserializer.open(file_name)
 
         # Проверка
-        assert len(objects) != 0
+        assert len(deserializer.model_objects) != 0
 
-        for i, j in zip(objects, nomenclature_data):
-            assert i == j
+        for object, data in zip(deserializer.model_objects, nomenclature_data):
+            assert object == data
 
-        assert objects[1] != nomenclature_data[0] 
+        assert deserializer.model_objects[1] != nomenclature_data[0] 
 
     """
     Проверка десериализации данных из JSON для recipe
@@ -448,15 +448,15 @@ class test_reporting(unittest.TestCase):
         recipe_data = self.reposity.data[data_reposity.recipe_key()]
 
         # Действие
-        objects = deserializer.deserialize(file_name)
+        deserializer.open(file_name)
 
         # Проверка
-        assert len(objects) != 0
+        assert len(deserializer.model_objects) != 0
 
-        for i, j in zip(objects, recipe_data):
-            assert i == j
+        for object, data in zip(deserializer.model_objects, recipe_data):
+            assert object == data
 
-        assert objects[1] != recipe_data[0] 
+        assert deserializer.model_objects[1] != recipe_data[0] 
 
 
 if __name__ == '__main__':
