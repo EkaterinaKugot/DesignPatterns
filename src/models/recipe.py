@@ -63,6 +63,9 @@ class recipe_model(base_model_name):
         Validator.validate_empty_argument("cooking_steps", cooking_steps)
         self.__cooking_steps = cooking_steps
 
+    """
+    Переопределение метода для преобразования в json
+    """
     def to_dict(self):
         return {
             "cooking_steps": self.cooking_steps,
@@ -72,3 +75,10 @@ class recipe_model(base_model_name):
             "nomenclatures": self.nomenclatures,
             "number_servings": self.number_servings
         }
+    
+    """
+    Переопределение получения аттрибутов и класса
+    """
+    @property
+    def attribute_class(self) -> dict:
+        return {"nomenclatures": nomenclature_model}

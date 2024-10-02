@@ -12,11 +12,12 @@ class rtf_report(abstract_report):
         self.__format = format_reporting.RTF
 
     def create(self, data: list):
+        self.result = ""
         Validator.validate_type("data", data, list)
         Validator.validate_empty_argument("data", data)
         
         first_model = data[0]
-        fields = list(filter(lambda x: not x.startswith("_") and not callable(getattr(first_model.__class__, x)), dir(first_model) ))
+        fields = self.get_class_fields(first_model)
         
         # Начало 
         self.result += r"{\rtf1\ansi\ansicpg1251\deff0\nouicompat{\fonttbl{\f0\fnil\fcharset0 Arial;}}"

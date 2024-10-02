@@ -17,7 +17,7 @@ class json_report(abstract_report):
         Validator.validate_empty_argument("data", data)
         
         first_model = data[0]
-        fields = list(filter(lambda x: not x.startswith("_") and not callable(getattr(first_model.__class__, x)), dir(first_model) ))
+        fields = self.get_class_fields(first_model)
 
         json_data = []
         
@@ -32,6 +32,9 @@ class json_report(abstract_report):
         
         self.result = json.dumps(json_data, indent=4, ensure_ascii=False)
 
+    """
+    Преобразование в словарь
+    """
     def __serialize(self, value):
         if isinstance(value, list):
             return [self.__serialize(item) for item in value]

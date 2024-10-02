@@ -12,11 +12,13 @@ class md_report(abstract_report):
         self.__format = format_reporting.MARKDOWN
 
     def create(self, data: list):
+        self.result = ""
         Validator.validate_type("data", data, list)
         Validator.validate_empty_argument("data", data)
         
         first_model = data[0]
-        fields = list(filter(lambda x: not x.startswith("_") and not callable(getattr(first_model.__class__, x)), dir(first_model) ))
+        fields = self.get_class_fields(first_model)
+        
         # Заголовок
         self.result += "| " + " | ".join(fields) + " |\n"
         
