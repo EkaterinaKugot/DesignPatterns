@@ -61,5 +61,5 @@ class range_model(base_model_id):
     Переопределение получения аттрибутов и класса
     """
     @property
-    def attribute_class(self) -> int:
+    def attribute_class(self) -> dict:
         return {"base_range": range_model}

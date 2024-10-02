@@ -21,15 +21,15 @@ class json_deserializer(abstract_logic):
         Validator.validate_type("file_name", file_name, str)
 
         try:
-            return self.deserialize(file_name)
+            return self.__deserialize_data(file_name)
         except Exception as ex:
             self.set_exception(ex)
             return False
     
     """
-    Десериализации данных из JSON
+    Десериализации данных
     """
-    def deserialize(self, file_name: str):
+    def __deserialize_data(self, file_name: str):
         full_path = self.file_search(file_name)
 
         with open(full_path) as stream:
@@ -51,9 +51,7 @@ class json_deserializer(abstract_logic):
     Заполнение модели данными
     """
     def __deserialize_model(self, item, model_class: abstract_reference):
-        fields = list(filter
-                          (lambda x: not x.startswith("_"), dir(model_class))
-                        )
+        fields = abstract_report.get_class_fields(model_class, True)
         obj = model_class()
         for key, value in item.items():
             deserialized_value = self.__deserialize(obj, key, value)
