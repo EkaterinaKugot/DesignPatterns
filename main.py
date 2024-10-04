@@ -13,10 +13,17 @@ reposity = data_reposity()
 start = start_service(reposity, manager)
 start.create()
 
+"""
+Api для получения списка всех форматов для построения отчетов
+"""
 @app.route("/api/reports/formats", methods=["GET"])
 def formats():
     return [{"name":item.name, "value":item.value} for item in format_reporting]
 
+
+"""
+Api для получения отчета по единицам измерения
+"""
 @app.route("/api/reports/range/<format>", methods=["GET"])
 def reports_range(format: str):
     inner_format = format_reporting(format)
@@ -25,6 +32,10 @@ def reports_range(format: str):
 
     return report.result
 
+
+"""
+Api для получения отчета по группам номенклатур
+"""
 @app.route("/api/reports/group/<format>", methods=["GET"])
 def reports_group(format: str):
     inner_format = format_reporting(format)
@@ -33,6 +44,10 @@ def reports_group(format: str):
 
     return report.result
 
+
+"""
+Api для получения отчета по номенклатурам
+"""
 @app.route("/api/reports/nomenclature/<format>", methods=["GET"])
 def reports_nomenclature(format: str):
     inner_format = format_reporting(format)
@@ -41,6 +56,10 @@ def reports_nomenclature(format: str):
 
     return report.result
 
+
+"""
+Api для получения отчета по рецептам
+"""
 @app.route("/api/reports/recipe/<format>", methods=["GET"])
 def reports_recipe(format: str):
     inner_format = format_reporting(format)
