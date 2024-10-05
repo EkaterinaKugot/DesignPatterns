@@ -1,0 +1,120 @@
+swagger: '2.0'
+info:
+  description: Набор сервисов для учета на предприятии /ООО Ромашка/
+  version: "1.0.0"
+  title: RestApi
+
+produces:
+  - application/json
+  - application/xml
+  - application/text
+
+basePath: "/api"
+
+paths:
+  /reports/formats:
+    get:
+      summary: Получить список форматов для отчетов
+      operationId: main.formats
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка     
+
+  /reports/range/{format}:
+    get:
+      summary: Получить список единиц измерения
+      operationId: main.reports_range
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+    parameters:
+    - name: format
+      in: path
+      description: Уникальный код формата
+      required: true
+      type: string 
+    
+  /reports/group/{format}:
+    get:
+      summary: Получить список групп номенклатур
+      operationId: main.reports_group
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+    parameters:
+    - name: format
+      in: path
+      description: Уникальный код формата
+      required: true
+      type: string
+
+  /reports/nomenclature/{format}:
+    get:
+      summary: Получить список номенклатур
+      operationId: main.reports_nomenclature
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+    parameters:
+    - name: format
+      in: path
+      description: Уникальный код формата
+      required: true
+      type: string
+
+  /reports/recipe/{format}:
+    get:
+      summary: Получить список рецептов
+      operationId: main.reports_recipe
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+    parameters:
+    - name: format
+      in: path
+      description: Уникальный код формата
+      required: true
+      type: string
+
+
+
