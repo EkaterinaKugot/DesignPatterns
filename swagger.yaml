@@ -12,7 +12,7 @@ produces:
 basePath: "/api"
 
 paths:
-  /reports/formats:
+  /report/formats:
     get:
       summary: Получить список форматов для отчетов
       operationId: main.formats
@@ -28,10 +28,42 @@ paths:
         default:
           description: Неизвестная ошибка     
 
-  /reports/range/{format}:
+  /report/models:
     get:
-      summary: Получить список единиц измерения
-      operationId: main.reports_range
+      summary: Получить список моделей
+      operationId: main.models
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка 
+
+  /type_filter:
+    get:
+      summary: Получить список типов фильтрации
+      operationId: main.get_type_filter
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка 
+
+  /report/range/{format}:
+    get:
+      summary: Получить отчет по единицам измерения
+      operationId: main.report_range
       produces:
         - application/text
       responses:
@@ -50,10 +82,10 @@ paths:
       required: true
       type: string 
     
-  /reports/group/{format}:
+  /report/group/{format}:
     get:
-      summary: Получить список групп номенклатур
-      operationId: main.reports_group
+      summary: Получить отчет по группам номенклатур
+      operationId: main.report_group
       produces:
         - application/text
       responses:
@@ -72,10 +104,10 @@ paths:
       required: true
       type: string
 
-  /reports/nomenclature/{format}:
+  /report/nomenclature/{format}:
     get:
-      summary: Получить список номенклатур
-      operationId: main.reports_nomenclature
+      summary: Получить отчет по номенклатурам
+      operationId: main.report_nomenclature
       produces:
         - application/text
       responses:
@@ -94,10 +126,10 @@ paths:
       required: true
       type: string
 
-  /reports/recipe/{format}:
+  /report/recipe/{format}:
     get:
-      summary: Получить список рецептов
-      operationId: main.reports_recipe
+      summary: Получить отчет по рецептам
+      operationId: main.report_recipe
       produces:
         - application/text
       responses:
@@ -115,6 +147,57 @@ paths:
       description: Уникальный код формата
       required: true
       type: string
+
+  /filter/{model}:
+    post:
+      summary: Фильтрация данных по модели
+      operationId: main.filter_data
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: model
+          in: path
+          required: true
+          type: string
+          description: Модели для фильтрации. Смотреть существующие модели /api/report/models.
+        - in: body
+          name: filter
+          description: Фильтр. Типы фильтрации можно посмотреть /api/type_filter.
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                default: ""
+              type_filter_name:
+                type: string
+                default: "EQUALE"
+              id:
+                type: string
+                default: ""
+              type_filter_id:
+                type: string
+                default: "EQUALE"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        400:
+          description: Данная модель не найдена. Смотреть существующие модели /api/report/models
+          schema:
+            type: object
+        404:
+          description: Данных для фильтрации по модели нет.
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
 
 
 
