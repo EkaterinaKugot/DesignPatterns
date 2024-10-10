@@ -1,5 +1,5 @@
 from src.errors.validator import Validator
-from src.core.type_filter import type_filter
+from src.dto.type_filter import type_filter
 
 class filter:
     __name: str = ""

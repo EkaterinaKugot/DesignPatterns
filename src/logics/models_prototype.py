@@ -1,10 +1,8 @@
 from src.core.abstract_prototype import abstract_prototype
 from src.dto.filter import filter
 from src.errors.validator import Validator
-from src.core.type_filter import type_filter
-from src.models.nomenclature import nomenclature_model
-from src.models.range import range_model
-from src.core.abstract_reference import abstract_reference
+from src.core.abstract_report import abstract_report
+from src.dto.filtering_type import filtering_type
 
 
 class models_prototype(abstract_prototype):
@@ -27,39 +25,40 @@ class models_prototype(abstract_prototype):
         
         result = []
         for item in self.data:
-            if self.__comparison_name_diff_models(item, filterDto):
-                result.append(item)
+            item_names = self.__defining_list_data_compare(item)
+
+            filt = filtering_type(filterDto.type_filter_name)
+            for item_name in item_names:
+                if filt.filtration(filterDto.name, item_name):
+                    result.append(item)
 
         return result
-    
-    def __comparison_name_diff_models(self, item: abstract_reference, filterDto: filter) -> True:
-        
-        if isinstance(item, range_model) and item.base_range is not None:
-            item_names = [item.name, item.base_range.name]
-        elif isinstance(item, nomenclature_model):
-            item_names = [item.full_name]
-        else:
-            item_names = [item.name]
 
-        for item_name in item_names:
-            if filterDto.type_filter_name == type_filter.EQUALE:
-                if item_name == filterDto.name:
-                    return True
-            elif filterDto.type_filter_name == type_filter.LIKE:
-                if filterDto.name in item_name:
-                    return True
+    def __defining_list_data_compare(self, item, name_attr: str = "name"):
+        Validator.validate_type("name_attr", name_attr, str)
+        Validator.validate_empty_argument("name_attr", name_attr)
+
+        attribute = abstract_report.get_class_fields(item)
+        attribute_class: dict = item.attribute_class
+        for key, value in attribute_class.items():
+            if isinstance(item, value) and getattr(item, key) is not None:
+                return [getattr(item, name_attr), getattr(getattr(item, key), name_attr)]
+            elif "full_name" in attribute and name_attr == "name":
+                return [getattr(item, "full_name")]
+            else:
+                return [getattr(item, name_attr)]
         
     
     def filter_id(self, filterDto: filter) -> list:
         if filterDto.id is None or filterDto.id == "":
             return self.data
+        
         result = []
+        filt = filtering_type(filterDto.type_filter_id)
         for item in self.data:
-            if filterDto.type_filter_id == type_filter.EQUALE:
-                if str(item.id) == filterDto.id:
-                    result.append(item)
-            elif filterDto.type_filter_id == type_filter.LIKE:
-                if filterDto.id in str(item.id):
+            item_ids = self.__defining_list_data_compare(item, "id")
+            for item_id in item_ids:
+                if filt.filtration(filterDto.id, str(item_id)):
                     result.append(item)
 
         return result

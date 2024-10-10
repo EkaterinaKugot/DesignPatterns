@@ -1,6 +1,6 @@
 import connexion
 from src.core.format_reporting import format_reporting
-from src.core.type_filter import type_filter
+from src.dto.type_filter import type_filter
 from src.errors.validator import Validator
 from src.reports.report_factory import report_factory
 from src.data_reposity import data_reposity

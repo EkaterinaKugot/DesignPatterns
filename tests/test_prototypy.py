@@ -3,7 +3,7 @@ from src.logics.models_prototype import models_prototype
 from src.dto.filter import filter
 from src.start_service import start_service
 from src.data_reposity import data_reposity
-from src.core.type_filter import type_filter
+from src.dto.type_filter import type_filter
 from src.manager.settings_manager import settings_manager
 
 """
