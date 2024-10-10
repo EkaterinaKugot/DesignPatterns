@@ -111,7 +111,7 @@ def filter_data(model: str):
     if not prototype.data:
         return {}
 
-    report = report_factory(manager).create(format_reporting.JSON)
+    report = report_factory(manager).create_default()
     report.create(prototype.data)
 
     return report.result

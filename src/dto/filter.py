@@ -45,7 +45,7 @@ class filter:
         self.__type_filter_id = type_filter_id
 
     @staticmethod
-    def create(data) -> filter:
+    def create(data: dict) -> filter:
         Validator.validate_not_none("data", data)
 
         type_filter_name = data.get('type_filter_name', 'EQUALE').upper()

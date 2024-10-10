@@ -40,13 +40,15 @@ class models_prototype(abstract_prototype):
 
         attribute = abstract_report.get_class_fields(item)
         attribute_class: dict = item.attribute_class
-        for key, value in attribute_class.items():
-            if isinstance(item, value) and getattr(item, key) is not None:
-                return [getattr(item, name_attr), getattr(getattr(item, key), name_attr)]
-            elif "full_name" in attribute and name_attr == "name":
-                return [getattr(item, "full_name")]
-            else:
-                return [getattr(item, name_attr)]
+        if len(attribute_class) != 0:
+            for key, value in attribute_class.items():
+                if isinstance(item, value) and getattr(item, key) is not None:
+                    return [getattr(item, name_attr), getattr(getattr(item, key), name_attr)]
+                
+        if "full_name" in attribute and name_attr == "name":
+            return [getattr(item, "full_name")]
+        else:
+            return [getattr(item, name_attr)]
         
     
     def filter_id(self, filterDto: filter) -> list:

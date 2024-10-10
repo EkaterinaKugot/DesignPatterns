@@ -12,7 +12,7 @@ class settings:
     __сorrespondent_account = ""
     __bik = ""
     __type_property = ""
-    __report_format = format_reporting.CSV
+    __report_format = format_reporting.JSON
 
     @property
     def organization_name(self) -> str:

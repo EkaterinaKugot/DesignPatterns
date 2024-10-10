@@ -1,7 +1,7 @@
 import unittest
 from src.manager.settings_manager import settings_manager
 from src.models.settings import settings
-from src.reports.csv_report import csv_report
+from src.reports.json_report import json_report
 from src.errors.custom_exception import TypeException, RequiredLengthException, ArgumentException
 
 """
@@ -61,7 +61,7 @@ class test_settings(unittest.TestCase):
       report_class = manager.get_report_class()
 
       # Проверки
-      assert isinstance(report_class, csv_report)
+      assert isinstance(report_class, json_report)
  
 
    """
