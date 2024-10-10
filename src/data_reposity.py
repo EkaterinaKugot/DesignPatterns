@@ -51,3 +51,17 @@ class data_reposity(abstract_logic):
     """
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
+
+    """
+    Получить список всех ключей
+    """
+    @staticmethod
+    def keys() -> list:
+        result = []
+        methods = [method for method in dir(data_reposity) if
+                    callable(getattr(data_reposity, method)) and method.endswith('_key')]
+        for method in methods:
+            key = getattr(data_reposity, method)()
+            result.append(key)
+
+        return result
