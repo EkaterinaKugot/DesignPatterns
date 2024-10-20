@@ -55,7 +55,7 @@ class report_factory(abstract_logic):
     """
     @property 
     def settings(self) -> settings:
-        return self.__settings_manager.settings
+        return self.__settings_manager.current_settings
     
     def load_formats_from_settings(self) -> None:
         tmp_reports_setting = {}
