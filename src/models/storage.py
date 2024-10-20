@@ -1,11 +1,21 @@
-from src.core.base_model import base_model_id
+from src.core.base_model import base_model_name
 from src.errors.validator import Validator
 
 """
 Модель склада
 """
-class storage_model(base_model_id):
+class storage_model(base_model_name):
     __address: str = ""
+
+    @staticmethod
+    def create(
+        address: str,
+        name: str = ""
+    ) -> None:
+        storage = storage_model()
+        storage.address = address
+        storage.name = name
+        return storage
 
     """
     Адрес (местоположение)

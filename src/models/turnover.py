@@ -19,12 +19,14 @@ class turnover_model(base_model_id):
         turnover: float,
         nomenclature: nomenclature_model,
         range: range_model,
+        name: str = ""
     ) -> None:
         turnover_m = turnover_model()
         turnover_m.storage = storage
         turnover_m.nomenclature = nomenclature
         turnover_m.turnover = turnover
         turnover_m.range = range
+        turnover_m.name = name
         return turnover_m
 
     """

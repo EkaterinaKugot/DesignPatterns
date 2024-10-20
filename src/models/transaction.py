@@ -24,7 +24,8 @@ class transaction_model(base_model_id):
         quantity: float,
         type_transaction: transaction_type,
         range: range_model,
-        period: datetime 
+        period: datetime,
+        name: str = ""
     ) -> None:
         transaction = transaction_model()
         transaction.storage = storage
@@ -33,6 +34,7 @@ class transaction_model(base_model_id):
         transaction.type_transaction = type_transaction
         transaction.range = range
         transaction.period = period
+        transaction.name = name
         return transaction
 
     """

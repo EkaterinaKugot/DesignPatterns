@@ -1,14 +1,20 @@
 import unittest
+from datetime import datetime
 from src.models.nomenclature import nomenclature_model
 from src.models.range import range_model
 from src.models.group import group_model
 from src.models.storage import storage_model
 from src.models.organization import organization_model
-from src.manager.nomenclature_manager import nomenclature_manager
+from src.models.storage import storage_model
+from src.models.transaction import transaction_model
+from src.models.turnover import turnover_model
 
+from src.core.transaction_type import transaction_type
+
+from src.manager.nomenclature_manager import nomenclature_manager
 from src.manager.settings_manager import settings_manager
 
-from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException
+from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException, LessPermissibleValueException
 from src.errors.custom_exception import MorePermissibleValueException, RequiredLengthException, EmptyArgumentException
 
 class test_models(unittest.TestCase):
@@ -43,7 +49,7 @@ class test_models(unittest.TestCase):
       # Проверка
       assert n1 != n2 # Сравнение по id с full_name
       assert g_n1 != g_n2 # Сравнение неравных name
-      assert st1 != st2 # Сравнение по id name
+      assert st1 == st2 # Сравнение по name
       assert range1 != range2 # Сравнение по id
 
 
@@ -145,7 +151,7 @@ class test_models(unittest.TestCase):
          range_model().conversion_factor = "qwer"
 
       base_range = range_model.create("грамм", 1000)
-      with self.assertRaises(MorePermissibleValueException):
+      with self.assertRaises(LessPermissibleValueException):
          range_model.create("кг", 1, base_range)
 
 
@@ -155,7 +161,7 @@ class test_models(unittest.TestCase):
    def test_conversion_factor_range_fail(self):
       base_range = range_model.create("грамм", 1000)
       
-      with self.assertRaises(MorePermissibleValueException):
+      with self.assertRaises(LessPermissibleValueException):
          new_range = range_model.create("кг", 1, base_range)
 
    """
@@ -171,6 +177,70 @@ class test_models(unittest.TestCase):
       assert nomenclature.group.name == "Сырье"
       assert nomenclature.range.name == "гр"
       assert nomenclature.range.conversion_factor == 5
+
+   """
+   Проверка создания storage в storage_model
+   """
+   def test_create_storage(self):
+      # Подготовка
+      address = "Красноказачья 7"
+      name = "Склад 1"
+      storage = storage_model.create(address, name)
+
+      assert isinstance(storage, storage_model)
+      assert storage.name == name
+      assert storage.address == address
+
+   """
+   Проверка создания transaction в transaction_model
+   """
+   def test_create_transaction(self):
+      # Подготовка
+      storage = storage_model.create("Красноказачья 7", "Склад 1")
+      quantity = 5.
+      nomenclature = nomenclature_manager.create("Ванилин", range_model.create("гр", 5))
+      type_transaction = transaction_type.RECEIPT
+      range = range_model.create("гр", 1)
+      period = datetime.now()
+      transaction = transaction_model.create(
+         storage, 
+         nomenclature, 
+         quantity, 
+         type_transaction, 
+         range,
+         period
+      )
+
+      assert isinstance(transaction, transaction_model)
+      assert transaction.storage == storage
+      assert transaction.nomenclature == nomenclature
+      assert transaction.quantity == quantity
+      assert transaction.type_transaction == type_transaction
+      assert transaction.range == range
+      assert transaction.period == period
+
+   """
+   Проверка создания turnover в turnover_model
+   """
+   def test_create_turnover(self):
+      # Подготовка
+      storage = storage_model.create("Красноказачья 7", "Склад 1")
+      turnover1 = 5.
+      nomenclature = nomenclature_manager.create("Ванилин", range_model.create("гр", 5))
+      range = range_model.create("гр", 1)
+
+      turnover = turnover_model.create(
+         storage, 
+         turnover1, 
+         nomenclature, 
+         range
+      )
+
+      assert isinstance(turnover, turnover_model)
+      assert turnover.storage == storage
+      assert turnover.nomenclature == nomenclature
+      assert turnover.turnover == turnover1
+      assert turnover.range == range
 
 
 if __name__ == '__main__':
