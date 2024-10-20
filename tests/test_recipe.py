@@ -4,7 +4,7 @@ from src.manager.recipe_manager import recipe_manager
 from src.models.nomenclature import nomenclature_model
 
 from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException
-from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, EmptyArgumentException
+from src.errors.custom_exception import MorePermissibleValueException, RequiredLengthException, EmptyArgumentException
 
 class test_recipe(unittest.TestCase):
 

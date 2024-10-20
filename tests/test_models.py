@@ -9,7 +9,7 @@ from src.manager.nomenclature_manager import nomenclature_manager
 from src.manager.settings_manager import settings_manager
 
 from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException
-from src.errors.custom_exception import PermissibleValueException, RequiredLengthException, EmptyArgumentException
+from src.errors.custom_exception import MorePermissibleValueException, RequiredLengthException, EmptyArgumentException
 
 class test_models(unittest.TestCase):
 
@@ -145,7 +145,7 @@ class test_models(unittest.TestCase):
          range_model().conversion_factor = "qwer"
 
       base_range = range_model.create("грамм", 1000)
-      with self.assertRaises(PermissibleValueException):
+      with self.assertRaises(MorePermissibleValueException):
          range_model.create("кг", 1, base_range)
 
 
@@ -155,7 +155,7 @@ class test_models(unittest.TestCase):
    def test_conversion_factor_range_fail(self):
       base_range = range_model.create("грамм", 1000)
       
-      with self.assertRaises(PermissibleValueException):
+      with self.assertRaises(MorePermissibleValueException):
          new_range = range_model.create("кг", 1, base_range)
 
    """

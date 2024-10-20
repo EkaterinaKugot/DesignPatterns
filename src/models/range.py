@@ -41,7 +41,7 @@ class range_model(base_model_id):
         item.name = name
         item.conversion_factor = conversion_factor
         if base_range is not None:
-            Validator.validate_permissible_value("base_range", base_range.conversion_factor, conversion_factor)
+            Validator.validate_less_permissible_value("base_range", base_range.conversion_factor, conversion_factor)
             item.base_range = base_range
             
         return item
