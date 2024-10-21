@@ -9,14 +9,14 @@ from src.models.range import range_model
 """
 class turnover_model(base_model_id):
     __storage: storage_model
-    __turnover: float
+    __turnover: int
     __nomenclature: nomenclature_model
     __range: range_model
 
     @staticmethod
     def create(
         storage: storage_model,
-        turnover: float,
+        turnover: int,
         nomenclature: nomenclature_model,
         range: range_model,
         name: str = ""
@@ -45,12 +45,12 @@ class turnover_model(base_model_id):
     Оборот
     """
     @property
-    def turnover(self) -> float:
+    def turnover(self) -> int:
         return self.__turnover
     
     @turnover.setter
-    def turnover(self, turnover: float):
-        Validator.validate_type("turnover", turnover, float)
+    def turnover(self, turnover: int):
+        Validator.validate_type("turnover", turnover, int)
         self.__turnover = turnover
 
     """

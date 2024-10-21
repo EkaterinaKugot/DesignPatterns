@@ -74,6 +74,40 @@ class test_start(unittest.TestCase):
         assert found[0].group is not None
 
     """
+    Проверить создание складов
+    """
+    def test_start_service_consists_storage(self):
+        # Подготовка
+        set_manager = settings_manager()
+        reposity = data_reposity()
+        start = start_service(reposity, set_manager)
+        start.create()
+
+        # Действие
+        found = list(filter(lambda x: x.name == "Склад 1", reposity.data[data_reposity.storage_key()]  ))
+
+        # Проверки
+        assert len(reposity.data[data_reposity.storage_key()]) > 0
+        assert len(found) == 1
+
+    """
+    Проверить создание транзакций
+    """
+    def test_start_service_consists_transaction(self):
+        # Подготовка
+        set_manager = settings_manager()
+        reposity = data_reposity()
+        start = start_service(reposity, set_manager)
+
+        # Действие
+        start.create()
+
+        # Проверки
+        assert len(reposity.data[data_reposity.transaction_key()]) > 0
+        assert len(reposity.data[data_reposity.transaction_key()]) == len(reposity.data[data_reposity.nomenclature_key()])
+        assert reposity.data[data_reposity.transaction_key()][0].nomenclature == reposity.data[data_reposity.nomenclature_key()][0]
+
+    """
     Проверить создание ключей
     """
     def test_keys(self):

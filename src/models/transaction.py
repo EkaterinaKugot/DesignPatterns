@@ -12,7 +12,7 @@ from datetime import datetime
 class transaction_model(base_model_id):
     __storage: storage_model
     __nomenclature: nomenclature_model
-    __quantity: float
+    __quantity: int
     __type_transaction: transaction_type
     __range: range_model
     __period: datetime
@@ -21,7 +21,7 @@ class transaction_model(base_model_id):
     def create(
         storage: storage_model,
         nomenclature: nomenclature_model,
-        quantity: float,
+        quantity: int,
         type_transaction: transaction_type,
         range: range_model,
         period: datetime,
@@ -65,13 +65,13 @@ class transaction_model(base_model_id):
     Количество
     """
     @property
-    def quantity(self) -> float:
+    def quantity(self) -> int:
         return self.__quantity
     
     @quantity.setter
-    def quantity(self, quantity: float):
-        Validator.validate_type("quantity", quantity, float)
-        Validator.validate_more_permissible_value("quantity", quantity, 0.0)
+    def quantity(self, quantity: int):
+        Validator.validate_type("quantity", quantity, int)
+        Validator.validate_more_permissible_value("quantity", quantity, 0)
         self.__quantity = quantity
 
     """

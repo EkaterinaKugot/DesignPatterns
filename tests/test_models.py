@@ -197,8 +197,8 @@ class test_models(unittest.TestCase):
    def test_create_transaction(self):
       # Подготовка
       storage = storage_model.create("Красноказачья 7", "Склад 1")
-      quantity = 5.
-      nomenclature = nomenclature_manager.create("Ванилин", range_model.create("гр", 5))
+      quantity = 5
+      nomenclature = nomenclature_manager.create("Ванилин", range_model.create("гр", quantity))
       type_transaction = transaction_type.RECEIPT
       range = range_model.create("гр", 1)
       period = datetime.now()
@@ -225,8 +225,8 @@ class test_models(unittest.TestCase):
    def test_create_turnover(self):
       # Подготовка
       storage = storage_model.create("Красноказачья 7", "Склад 1")
-      turnover1 = 5.
-      nomenclature = nomenclature_manager.create("Ванилин", range_model.create("гр", 5))
+      turnover1 = 5
+      nomenclature = nomenclature_manager.create("Ванилин", range_model.create("гр", turnover1))
       range = range_model.create("гр", 1)
 
       turnover = turnover_model.create(
