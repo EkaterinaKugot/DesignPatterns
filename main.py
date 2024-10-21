@@ -90,6 +90,30 @@ def report_recipe(format: str):
     return report.result
 
 """
+Api для получения отчета по складам
+"""
+@app.route("/api/report/storage/<format>", methods=["GET"])
+def report_storage(format: str):
+    format = format.upper()
+    inner_format = format_reporting(format)
+    report = report_factory(manager).create(inner_format)
+    report.create( reposity.data[ data_reposity.storage_key()  ] )
+
+    return report.result
+
+"""
+Api для получения отчета по транзакциям
+"""
+@app.route("/api/report/transaction/<format>", methods=["GET"])
+def report_transaction(format: str):
+    format = format.upper()
+    inner_format = format_reporting(format)
+    report = report_factory(manager).create(inner_format)
+    report.create( reposity.data[ data_reposity.transaction_key()  ] )
+
+    return report.result
+
+"""
 Api для получения фильтрованных данных по модели
 """
 @app.route("/api/filter/<model>", methods=["POST"])

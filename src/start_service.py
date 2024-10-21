@@ -9,8 +9,6 @@ from src.manager.settings_manager import settings_manager
 from src.manager.recipe_manager import recipe_manager
 from src.models.storage import storage_model
 from src.models.transaction import transaction_model
-from src.dto.filter import filter
-from src.logics.models_prototype import models_prototype
 from src.core.transaction_type import transaction_type
 import os
 from datetime import datetime
@@ -18,6 +16,7 @@ from datetime import datetime
 class start_service(abstract_logic):
     __reposity: data_reposity = None
     __settings_manager: settings_manager = None
+    __nomenclatures: list = []
     
 
     def __init__(self, reposity: data_reposity, manager: settings_manager) -> None:
@@ -33,6 +32,18 @@ class start_service(abstract_logic):
     @property 
     def settings(self) -> settings:
         return self.__settings_manager.settings
+    
+    """
+    Номенклатуры
+    """
+    @property 
+    def nomenclatures(self) -> list:
+        return self.__nomenclatures
+    
+    @nomenclatures.setter
+    def nomenclatures(self, nomenclatures: list[list[nomenclature_model, int]]):
+        Validator.validate_type("nomenclatures", nomenclatures, list)
+        self.__nomenclatures = nomenclatures
 
     """
     Сформировать группы номенклатуры
@@ -40,13 +51,6 @@ class start_service(abstract_logic):
     def __create_nomenclature_groups(self): 
         list = [group_model.default_group_cold(), group_model.default_group_source()]
         self.__reposity.data[data_reposity.group_key()] = list
-
-    """
-    Сформировать номенклатуры
-    """
-    def __create_nomenclature(self): 
-        list = recipe_manager().creating_list_nomenclatures_all_recipes()
-        self.__reposity.data[data_reposity.nomenclature_key()] = list
 
     """
     Сформировать единицы измерения
@@ -60,14 +64,33 @@ class start_service(abstract_logic):
         self.__reposity.data[data_reposity.range_key()] = list
 
     """
+    Сформировать номенклатуры
+    """
+    def __create_nomenclature(self): 
+        groups = self.__reposity.data[data_reposity.group_key()]
+        ranges = self.__reposity.data[data_reposity.range_key()]
+        self.nomenclatures = recipe_manager(groups, ranges).creating_list_nomenclatures_all_recipes()
+
+        list = []
+        for data in self.nomenclatures:
+            if data[0] not in list:
+                list.append(data[0])
+
+        self.__reposity.data[data_reposity.nomenclature_key()] = list
+
+    """
     Сформировать рецепты
     """
     def __create_receipts(self): 
+        groups = self.__reposity.data[data_reposity.group_key()]
+        ranges = self.__reposity.data[data_reposity.range_key()]
+        def_nomenclatures = self.nomenclatures
+
         recipe_list = []
-        md_files = [f for f in os.listdir(recipe_manager().recipe_directory) if f.endswith('.md')]
+        md_files = [f for f in os.listdir(recipe_manager(groups, ranges).recipe_directory) if f.endswith('.md')]
         for md_file in md_files:
-            manager = recipe_manager()
-            manager.open(md_file)
+            manager = recipe_manager(groups, ranges)
+            manager.open(md_file, def_nomenclatures)
             recipe_list.append(manager.recipe)
         self.__reposity.data[data_reposity.recipe_key()] = recipe_list
 
@@ -84,21 +107,16 @@ class start_service(abstract_logic):
     """
     def __create_transaction(self): 
         list1 = []
-        nomenclatures: list[nomenclature_model] = self.__reposity.data[data_reposity.nomenclature_key()]
-        for nom in nomenclatures:
-            item_filter = filter()
-            item_filter.name = nom.range.name
-            range_data = self.__reposity.data[data_reposity.range_key()]
-            prototype = models_prototype(range_data)
-            prototype.create(range_data, item_filter)
-            Validator.validate_empty_argument("prototype.data", prototype.data)
-            range = prototype.data[0]
+        nomenclatures: list[list[nomenclature_model, int]] = self.nomenclatures
+        for nomenclature in nomenclatures:
+            nom = nomenclature[0]
+            range = nom.range
             
             list1.append(
                 transaction_model.create(
                     self.__reposity.data[data_reposity.storage_key()][0],
                     nom,
-                    nom.range.conversion_factor,
+                    nomenclature[1],
                     transaction_type.RECEIPT,
                     range,
                     datetime.now()
@@ -112,8 +130,8 @@ class start_service(abstract_logic):
     def create(self):
         try:
             self.__create_nomenclature_groups()
-            self.__create_nomenclature()
             self.__create_range()
+            self.__create_nomenclature()
             self.__create_receipts()
             self.__create_storage()
             self.__create_transaction()

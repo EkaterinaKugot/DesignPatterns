@@ -69,7 +69,7 @@ class test_start(unittest.TestCase):
         found = list(filter(lambda x: x.full_name == "Пшеничная мука", reposity.data[data_reposity.nomenclature_key()]  ))
 
         # Проверки
-        assert len(found) > 1    
+        assert len(found) == 1    
         assert found[0].range is not None
         assert found[0].group is not None
 
@@ -104,7 +104,7 @@ class test_start(unittest.TestCase):
 
         # Проверки
         assert len(reposity.data[data_reposity.transaction_key()]) > 0
-        assert len(reposity.data[data_reposity.transaction_key()]) == len(reposity.data[data_reposity.nomenclature_key()])
+        assert len(reposity.data[data_reposity.transaction_key()]) == len(start.nomenclatures)
         assert reposity.data[data_reposity.transaction_key()][0].nomenclature == reposity.data[data_reposity.nomenclature_key()][0]
 
     """

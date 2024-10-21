@@ -80,7 +80,7 @@ class test_prototypy(unittest.TestCase):
         prototype.create(data, item_filter)
 
         # Проверка
-        assert len(prototype.data) == 2
+        assert len(prototype.data) == 1
         assert prototype.data[0] == item
 
     """

@@ -13,6 +13,7 @@ from src.models.range import range_model
 from src.models.nomenclature import nomenclature_model
 from src.models.recipe import recipe_model
 from src.models.group import group_model
+from src.models.transaction import transaction_model
 from src.reports.json_deserializer import json_deserializer
 import unittest
 import os 
@@ -129,7 +130,6 @@ class test_reporting(unittest.TestCase):
         self.__check_folder_exists()
         file_name = f"{data_reposity.group_key()}.csv"
         self.__save_file(file_name, self.report_csv.result)
-        print(self.report_csv.result)
     
     """
     Проверка работы отчета CSV для recipe
@@ -249,7 +249,7 @@ class test_reporting(unittest.TestCase):
     Проверка работы отчета json для recipe
     """
     def __json_report_create_recipe(self):
-        ## Действие
+        # Действие
         self.report_json.create(self.reposity.data[data_reposity.recipe_key()])
 
         # Проверка
@@ -258,6 +258,21 @@ class test_reporting(unittest.TestCase):
         self.__check_folder_exists()
         file_name = f"{data_reposity.recipe_key()}.json"
         self.__save_file(file_name, self.report_json.result)
+
+    """
+    Проверка работы отчета json для transaction
+    """
+    def __json_report_create_transaction(self):
+        # Действие
+        self.report_json.create(self.reposity.data[data_reposity.transaction_key()])
+
+        # Проверка
+        assert self.report_json.result != ""
+
+        self.__check_folder_exists()
+        file_name = f"{data_reposity.transaction_key()}.json"
+        self.__save_file(file_name, self.report_json.result)
+
 
     """
     Проверка работы отчета xml для range
@@ -435,7 +450,7 @@ class test_reporting(unittest.TestCase):
         for object, data in zip(deserializer.model_objects, nomenclature_data):
             assert object == data
 
-        assert deserializer.model_objects[1] != nomenclature_data[0] 
+        assert deserializer.model_objects[1] != nomenclature_data[0]
 
     """
     Проверка десериализации данных из JSON для recipe
@@ -457,6 +472,27 @@ class test_reporting(unittest.TestCase):
             assert object == data
 
         assert deserializer.model_objects[1] != recipe_data[0] 
+
+    """
+    Проверка десериализации данных из JSON для transaction
+    """
+    def test_des_json_transaction(self):
+        # Подготовка
+        self.__json_report_create_transaction()
+        file_name = "transaction.json"
+        deserializer = json_deserializer(transaction_model)
+        transaction_data = self.reposity.data[data_reposity.transaction_key()]
+
+        # Действие
+        deserializer.open(file_name)
+
+        # Проверка
+        assert len(deserializer.model_objects) != 0
+
+        for object, data in zip(deserializer.model_objects, transaction_data):
+            assert object == data
+
+        assert deserializer.model_objects[1] != transaction_data[0]
 
 
 if __name__ == '__main__':

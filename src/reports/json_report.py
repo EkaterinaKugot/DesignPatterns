@@ -2,6 +2,8 @@ from src.core.format_reporting import format_reporting
 from src.core.abstract_report import abstract_report
 from src.errors.validator import Validator
 import json
+from datetime import datetime
+from enum import Enum
 
 """
 Отчет формирует набор данных в формате json
@@ -26,7 +28,7 @@ class json_report(abstract_report):
             row_data = {}
             for field in fields:
                 value = getattr(row, field)
-                
+
                 row_data[field] = self.__serialize(value)
             json_data.append(row_data)
         
@@ -40,7 +42,9 @@ class json_report(abstract_report):
             return [self.__serialize(item) for item in value]
         elif hasattr(value, "to_dict"):
             return value.to_dict()
-        elif hasattr(value, "__dict__"):
-            return {key: self.__serialize(val) for key, val in value.__dict__.items() if not key.startswith("_")}
+        elif isinstance(value, datetime):
+            return value.strftime('%Y-%m-%dT%H:%M:%S')
+        elif isinstance(value, Enum):
+            return value.value
         else:
             return value

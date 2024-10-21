@@ -122,7 +122,7 @@ class transaction_model(base_model_id):
             "quantity": self.quantity,
             "type_transaction": self.type_transaction.value,
             "range": self.range.to_dict(),
-            "period": self.period,
+            "period": self.period.strftime('%Y-%m-%dT%H:%M:%S'),
         }
     
     """
@@ -133,6 +133,5 @@ class transaction_model(base_model_id):
         return {
             "storage": storage_model,
             "nomenclature": nomenclature_model,
-            "type_transaction": transaction_type,
             "range": range_model
             }

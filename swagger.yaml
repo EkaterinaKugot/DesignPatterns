@@ -148,6 +148,50 @@ paths:
       required: true
       type: string
 
+  /report/storage/{format}:
+    get:
+      summary: Получить отчет по рецептам
+      operationId: main.report_storage
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+    parameters:
+    - name: format
+      in: path
+      description: Уникальный код формата
+      required: true
+      type: string
+
+  /report/transaction/{format}:
+    get:
+      summary: Получить отчет по транзакциям
+      operationId: main.report_transaction
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+    parameters:
+    - name: format
+      in: path
+      description: Уникальный код формата
+      required: true
+      type: string
+
   /filter/{model}:
     post:
       summary: Фильтрация данных по модели
