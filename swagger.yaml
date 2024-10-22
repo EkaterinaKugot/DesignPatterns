@@ -191,6 +191,28 @@ paths:
       description: Уникальный код формата
       required: true
       type: string
+  
+  /report/turnover/{format}:
+    get:
+      summary: Получить отчет по оборотам
+      operationId: main.report_turnover
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+    parameters:
+    - name: format
+      in: path
+      description: Уникальный код формата
+      required: true
+      type: string
 
   /filter/{model}:
     post:
@@ -274,6 +296,63 @@ paths:
               type_filter_id:
                 type: string
                 default: "EQUALE"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        400:
+          description: Данная модель не найдена. Возможна фильтрация по storage или nomenclature
+          schema:
+            type: object
+        404:
+          description: Данных для фильтрации по модели нет.
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+
+  /turnover/filter:
+    post:
+      summary: Фильтрация складских оборотов по складу, номенклатуре или периоду
+      operationId: main.filter_turnover
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: filter
+          description: Фильтрация по storage, nomenclature или периоду. Типы фильтрации можно посмотреть /api/type_filter.
+          required: true
+          schema:
+            type: object
+            properties:
+              model:
+                type: string
+                default: ""
+              name:
+                type: string
+                default: ""
+              type_filter_name:
+                type: string
+                default: "EQUALE"
+              id:
+                type: string
+                default: ""
+              type_filter_id:
+                type: string
+                default: "EQUALE"
+              start_period:
+                type: string
+                format: date-time
+                default: "2024-01-01T00:00:00Z"
+              end_period:
+                type: string
+                format: date-time
+                default: "2024-12-31T23:59:59Z"
       responses:
         200:
           description: OK

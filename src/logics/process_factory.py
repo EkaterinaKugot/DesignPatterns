@@ -4,40 +4,45 @@ from src.models.transaction import transaction_model
 from src.models.turnover import turnover_model
 from src.logics.transaction_service import transaction_service
 from src.errors.validator import Validator
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class turnover_process(abstract_processor):
-    __start_date: datetime = None
-    __end_date: datetime = None
+    __start_period: datetime = None
+    __end_period: datetime = None
     __turnovers: list[turnover_model] = []
 
-    def __init__(self, start_date: datetime, end_date: datetime):
-        self.start_date = start_date
-        self.end_date = end_date
+    def __init__(self, start_period: datetime = None, end_period: datetime = None):
+        if start_period is None:
+            start_period = datetime(2024, 1, 1)
+        if end_period is None:
+            end_period = datetime.now() + timedelta(minutes=1)
+        self.start_period = start_period
+        self.end_period = end_period
+        self.turnovers = []
 
     """
     Начало периода
     """
     @property
-    def start_date(self) -> datetime:
-        return self.__start_date
+    def start_period(self) -> datetime:
+        return self.__start_period
     
-    @start_date.setter
-    def start_date(self, start_date: datetime):
-        Validator.validate_type("start_date", start_date, datetime)
-        self.__start_date = start_date
+    @start_period.setter
+    def start_period(self, start_period: datetime):
+        Validator.validate_type("start_period", start_period, datetime)
+        self.__start_period = start_period
 
     """
     Конец периода
     """
     @property
-    def end_date(self) -> datetime:
-        return self.__end_date
+    def end_period(self) -> datetime:
+        return self.__end_period
     
-    @end_date.setter
-    def end_date(self, end_date: datetime):
-        Validator.validate_type("end_date", end_date, datetime)
-        self.__end_date = end_date
+    @end_period.setter
+    def end_period(self, end_period: datetime):
+        Validator.validate_type("end_period", end_period, datetime)
+        self.__end_period = end_period
 
     """
     Обороты
@@ -56,7 +61,7 @@ class turnover_process(abstract_processor):
     """
     def create(self, transactions: list[transaction_model]) -> list:
         for transaction in transactions:
-            if self.start_date <= transaction.period <= self.end_date:
+            if self.start_period <= transaction.period <= self.end_period:
                 quantity = 0
                 idx = -1
                 for i, tur in enumerate(self.turnovers):

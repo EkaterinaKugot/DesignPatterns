@@ -33,8 +33,8 @@ class test_process(unittest.TestCase):
         turnover.turnovers = turnovers
 
         # Проверка
-        assert turnover.start_date == start_date
-        assert turnover.end_date == end_date
+        assert turnover.start_period == start_date
+        assert turnover.end_period == end_date
         assert turnover.turnovers == turnovers
 
     """
@@ -63,9 +63,7 @@ class test_process(unittest.TestCase):
     """
     def test_turnover_process_create(self):
         # Подготовка
-        start_date: datetime = datetime(2024, 1, 1)
-        end_date: datetime = datetime(2024, 12, 30)
-        process_turnover = turnover_process(start_date, end_date)
+        process_turnover = turnover_process()
 
         transactions = self.reposity.data[data_reposity.transaction_key()]
         storage = self.reposity.data[data_reposity.storage_key()][0]
