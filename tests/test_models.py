@@ -49,7 +49,7 @@ class test_models(unittest.TestCase):
       # Проверка
       assert n1 != n2 # Сравнение по id с full_name
       assert g_n1 != g_n2 # Сравнение неравных name
-      assert st1 == st2 # Сравнение по name
+      assert st1 != st2 # Сравнение по id с name
       assert range1 != range2 # Сравнение по id
 
 

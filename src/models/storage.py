@@ -1,10 +1,10 @@
-from src.core.base_model import base_model_name
+from src.core.base_model import base_model_id
 from src.errors.validator import Validator
 
 """
 Модель склада
 """
-class storage_model(base_model_name):
+class storage_model(base_model_id):
     __address: str = ""
 
     @staticmethod

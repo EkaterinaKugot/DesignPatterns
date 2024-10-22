@@ -243,5 +243,54 @@ paths:
         default:
           description: Неизвестная ошибка
 
+  /transaction/filter:
+    post:
+      summary: Фильтрация транзакций по складу или номенклатуре
+      operationId: main.filter_transaction
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: filter
+          description: Фильтрация по storage или nomenclature. Типы фильтрации можно посмотреть /api/type_filter.
+          required: true
+          schema:
+            type: object
+            properties:
+              model:
+                type: string
+                default: ""
+              name:
+                type: string
+                default: ""
+              type_filter_name:
+                type: string
+                default: "EQUALE"
+              id:
+                type: string
+                default: ""
+              type_filter_id:
+                type: string
+                default: "EQUALE"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        400:
+          description: Данная модель не найдена. Возможна фильтрация по storage или nomenclature
+          schema:
+            type: object
+        404:
+          description: Данных для фильтрации по модели нет.
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+
 
 

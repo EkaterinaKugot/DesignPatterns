@@ -1,5 +1,6 @@
 from src.errors.validator import Validator
 from src.dto.type_filter import type_filter
+from src.core.abstract_reference import abstract_reference
 
 class filter:
     __name: str = ""
@@ -7,6 +8,8 @@ class filter:
 
     __id: str = ""
     __type_filter_id = type_filter.EQUALE
+
+    __model: str = ""
 
     @property
     def name(self) -> str:
@@ -44,9 +47,20 @@ class filter:
         Validator.validate_type("type_filter_id", type_filter_id, type_filter)
         self.__type_filter_id = type_filter_id
 
+    @property
+    def model(self) -> str:
+        return self.__model
+    
+    @model.setter
+    def model(self, model: str):
+        Validator.validate_type("model", model, str)
+        self.__model = model
+
     @staticmethod
     def create(data: dict) -> filter:
         Validator.validate_not_none("data", data)
+
+        model = data.get('model')
 
         type_filter_name = data.get('type_filter_name', 'EQUALE').upper()
         type_filter_name = getattr(type_filter, type_filter_name, type_filter.EQUALE)
@@ -58,6 +72,8 @@ class filter:
         filt.id = data.get('id')
         filt.type_filter_id = type_filter_id
         filt.type_filter_name = type_filter_name
+        if model is not None:
+            filt.model = model
 
         return filt
     
