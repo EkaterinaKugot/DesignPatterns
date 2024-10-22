@@ -2,30 +2,32 @@ from src.core.abstract_prototype import abstract_prototype
 from src.dto.filter import filter
 from src.errors.validator import Validator
 from src.core.abstract_report import abstract_report
-from src.dto.filtering_type import filtering_type
-from src.dto.type_filter import type_filter
+from src.logics.filter_service import filter_service
+from src.core.filter_type import filter_type
 
-
-class models_prototype(abstract_prototype):
+"""
+Класс для фильтрации данных
+"""
+class filter_prototype(abstract_prototype):
 
     def __init__(self, source: list) -> None:
         super().__init__(source)
 
     """
-    Фильтрация по имени и id данных из data
+    Переопределение метода для фильтрации по name и id
     """
-    def create(self, filterDto: filter) -> 'models_prototype':
+    def create(self, filterDto: filter) -> 'filter_prototype':
         Validator.validate_type("filterDto", filterDto, filter)
 
         self.data = self.__filter_name_id(filterDto.name, filterDto.type_filter_name)
         self.data = self.__filter_name_id(filterDto.id, filterDto.type_filter_id, "id")
-        instance = models_prototype(self.data)
+        instance = filter_prototype(self.data)
         return instance
     
     """
     Фильтрация по имени и id внутренней модели данных из data
     """
-    def filtering_internal_model(self, filterDto: filter, data_internal_model: list) -> 'models_prototype':
+    def filtering_internal_model(self, filterDto: filter, data_internal_model: list) -> 'filter_prototype':
         Validator.validate_type("filterDto", filterDto, filter)
         Validator.validate_type("filterDto", data_internal_model, list)
 
@@ -39,12 +41,12 @@ class models_prototype(abstract_prototype):
             return self.data
         
         # Филтруем внутрении модели
-        prototype_model = models_prototype(data_internal_model)
+        prototype_model = filter_prototype(data_internal_model)
         prototype_model.create(filterDto) 
 
         if not prototype_model.data:
             self.data = []
-            return models_prototype(self.data)
+            return filter_prototype(self.data)
         
         internal_model = attribute_class[filterDto.model]
         Validator.validate_type("prototype_model.data[0]", prototype_model.data[0], internal_model)
@@ -52,7 +54,7 @@ class models_prototype(abstract_prototype):
         # Находим по id внутренних моделей (так как уникальны) нужные данные
         self.data = self.__filter_internal_model_id(filterDto, prototype_model.data)
 
-        instance = models_prototype(self.data)
+        instance = filter_prototype(self.data)
         return instance
 
     def __filter_internal_model_id(self, filterDto, data: list):
@@ -60,7 +62,7 @@ class models_prototype(abstract_prototype):
         for item in self.data:
             item_internal_model = getattr(item, filterDto.model)
             for model in data:
-                filt = filtering_type(type_filter.EQUALE)
+                filt = filter_service(filter_type.EQUALE)
                 if filt.filtration(str(item_internal_model.id), str(model.id)):
                     result.append(item)
         return result
@@ -72,14 +74,14 @@ class models_prototype(abstract_prototype):
     def __filter_name_id(
         self, 
         filterDto_arg: str, 
-        filterDto_type: type_filter, 
+        filterDto_type: filter_type, 
         name_attr: str = "name",
     ) -> list:
         if filterDto_arg is None or filterDto_arg == "":
             return self.data
         
         result = []
-        filt = filtering_type(filterDto_type)
+        filt = filter_service(filterDto_type)
         for item in self.data:
             item_names = self.__defining_list_data_compare(item, name_attr)
             for item_name in item_names:

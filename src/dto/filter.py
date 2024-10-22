@@ -1,13 +1,17 @@
 from src.errors.validator import Validator
-from src.dto.type_filter import type_filter
+from src.core.filter_type import filter_type
 from src.core.abstract_reference import abstract_reference
 
+
+"""
+Фильтр
+"""
 class filter:
     __name: str = ""
-    __type_filter_name = type_filter.EQUALE
+    __type_filter_name = filter_type.EQUALE
 
     __id: str = ""
-    __type_filter_id = type_filter.EQUALE
+    __type_filter_id = filter_type.EQUALE
 
     __model: str = ""
 
@@ -21,12 +25,12 @@ class filter:
         self.__name = name
 
     @property
-    def type_filter_name(self) -> type_filter:
+    def type_filter_name(self) -> filter_type:
         return self.__type_filter_name
     
     @type_filter_name.setter
-    def type_filter_name(self, type_filter_name: type_filter):
-        Validator.validate_type("type_filter_name", type_filter_name, type_filter)
+    def type_filter_name(self, type_filter_name: filter_type):
+        Validator.validate_type("type_filter_name", type_filter_name, filter_type)
         self.__type_filter_name = type_filter_name
 
     @property
@@ -39,12 +43,12 @@ class filter:
         self.__id = id
 
     @property
-    def type_filter_id(self) -> type_filter:
+    def type_filter_id(self) -> filter_type:
         return self.__type_filter_id
     
     @type_filter_id.setter
-    def type_filter_id(self, type_filter_id: type_filter):
-        Validator.validate_type("type_filter_id", type_filter_id, type_filter)
+    def type_filter_id(self, type_filter_id: filter_type):
+        Validator.validate_type("type_filter_id", type_filter_id, filter_type)
         self.__type_filter_id = type_filter_id
 
     @property
@@ -63,9 +67,9 @@ class filter:
         model = data.get('model')
 
         type_filter_name = data.get('type_filter_name', 'EQUALE').upper()
-        type_filter_name = getattr(type_filter, type_filter_name, type_filter.EQUALE)
+        type_filter_name = getattr(filter_type, type_filter_name, filter_type.EQUALE)
         type_filter_id = data.get('type_filter_id', 'EQUALE').upper()
-        type_filter_id = getattr(type_filter, type_filter_id, type_filter.EQUALE)
+        type_filter_id = getattr(filter_type, type_filter_id, filter_type.EQUALE)
 
         filt = filter()
         filt.name = data.get('name')

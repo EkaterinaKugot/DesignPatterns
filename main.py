@@ -1,6 +1,6 @@
 import connexion
 from src.core.format_reporting import format_reporting
-from src.dto.type_filter import type_filter
+from src.core.filter_type import filter_type
 from src.errors.validator import Validator
 from src.reports.report_factory import report_factory
 from src.data_reposity import data_reposity
@@ -8,7 +8,7 @@ from src.manager.settings_manager import settings_manager
 from src.start_service import start_service
 from flask import abort, request
 from src.dto.filter import filter
-from src.logics.models_prototype import models_prototype
+from src.logics.filter_prototype import filter_prototype
 
 app = connexion.FlaskApp(__name__)
 manager = settings_manager()
@@ -31,7 +31,7 @@ Api для получения списка всех форматов фильт�
 """
 @app.route("/api/type_filter", methods=["GET"])
 def get_type_filter():
-    return [{"name":item.name, "value":item.value} for item in type_filter]
+    return [{"name":item.name, "value":item.value} for item in filter_type]
 
 """
 Api для получения списка моделей
@@ -131,7 +131,7 @@ def filter_data(model: str):
     if not data:
         abort(404)
 
-    prototype = models_prototype(data)
+    prototype = filter_prototype(data)
     prototype.create(item_filter)
 
     if not prototype.data:
@@ -166,7 +166,7 @@ def filter_transaction():
     if not data:
         abort(404)
 
-    prototype = models_prototype(data)
+    prototype = filter_prototype(data)
     prototype.filtering_internal_model(item_filter, data_model)
 
     print(prototype.data)
