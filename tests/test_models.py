@@ -205,7 +205,7 @@ class test_models(unittest.TestCase):
       transaction = transaction_model.create(
          storage, 
          nomenclature, 
-         quantity, 
+         float(quantity), 
          type_transaction, 
          range,
          period

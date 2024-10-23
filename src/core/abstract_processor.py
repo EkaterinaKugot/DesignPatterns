@@ -9,5 +9,5 @@ from src.models.transaction import transaction_model
 class abstract_processor:
     
     @abstractmethod
-    def create(self, transactions: list[transaction_model]):
+    def processor(self, transactions: list[transaction_model]):
         pass

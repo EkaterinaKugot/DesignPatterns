@@ -74,12 +74,14 @@ class json_deserializer(abstract_logic):
             deserialized_value = [self.__deserialize(obj, key, item) for item in value]
         elif isinstance(value, str):
             try:
-                deserialized_value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
+                deserialized_value = transaction_type[value]
             except:
-                try:
-                    deserialized_value = transaction_type[value]
-                except:
-                    deserialized_value = value
+                deserialized_value = value  
+        elif key == "period":
+            try:
+                deserialized_value = datetime.fromtimestamp(value)
+            except:
+                deserialized_value = value  
         else:
             deserialized_value = value
         return deserialized_value

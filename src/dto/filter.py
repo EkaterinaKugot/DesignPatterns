@@ -61,10 +61,8 @@ class filter:
         self.__model = model
 
     @staticmethod
-    def create(data: dict) -> filter:
+    def create(data: dict, model: str = "") -> filter:
         Validator.validate_not_none("data", data)
-
-        model = data.get('model')
 
         type_filter_name = data.get('type_filter_name', 'EQUALE').upper()
         type_filter_name = getattr(filter_type, type_filter_name, filter_type.EQUALE)

@@ -108,22 +108,7 @@ class recipe_manager(abstract_logic):
     ) -> list[list[nomenclature_model, int]]:
         list1: list[list[nomenclature_model, int]] = []
         if def_nomenclatures is None:
-            name_nomenclature = {}
-            for ingredient, g in zip(ingredients, gram):
-                is_range = False
-                for r in self.ranges:
-                    if r.name == g[1]:
-                        range = r
-                        is_range = True
-                        break
-                if ingredient in name_nomenclature.keys():
-                    nomenclature = name_nomenclature[ingredient]
-                elif is_range:
-                    nomenclature = nomenclature_manager.create(ingredient, range, self.groups[1])
-                    name_nomenclature[ingredient] = nomenclature
-                else:
-                    ArgumentException("range", range)
-                list1.append([nomenclature, g[0]])
+            self.__create_default_nomenclature(ingredients, gram, list1)
         else:
             for ingredient, g in zip(ingredients, gram):
                 for nom in def_nomenclatures:
@@ -131,6 +116,32 @@ class recipe_manager(abstract_logic):
                         list1.append(nom)
                         break
         return list1
+
+    """
+    Функция для заполнения стандартного списка номенклатур
+    """
+    def __create_default_nomenclature(
+        self,
+        ingredients: list[str], 
+        gram:list[list[int, str]],
+        list1: list
+    ) -> None:
+        name_nomenclature = {}
+        for ingredient, g in zip(ingredients, gram):
+            is_range = False
+            for r in self.ranges:
+                if r.name == g[1]:
+                    range = r
+                    is_range = True
+                    break
+            if ingredient in name_nomenclature.keys():
+                nomenclature = name_nomenclature[ingredient]
+            elif is_range:
+                nomenclature = nomenclature_manager.create(ingredient, range, self.groups[1])
+                name_nomenclature[ingredient] = nomenclature
+            else:
+                ArgumentException("range", range)
+            list1.append([nomenclature, g[0]])
     
     """
     Функция для обработки создания списка номенклатур по всем рецептам

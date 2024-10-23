@@ -12,6 +12,7 @@ from src.models.transaction import transaction_model
 from src.core.transaction_type import transaction_type
 import os
 from datetime import datetime
+import random
 
 class start_service(abstract_logic):
     __reposity: data_reposity = None
@@ -112,12 +113,14 @@ class start_service(abstract_logic):
             nom = nomenclature[0]
             range = nom.range
             
+            random_quantity = random.randint(10, 300)
+            random_transaction_type = random.choice(list(transaction_type))
             list1.append(
                 transaction_model.create(
                     self.__reposity.data[data_reposity.storage_key()][0],
                     nom,
-                    nomenclature[1],
-                    transaction_type.RECEIPT,
+                    float(random_quantity),
+                    random_transaction_type,
                     range,
                     datetime.now()
                 )

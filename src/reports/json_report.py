@@ -43,7 +43,7 @@ class json_report(abstract_report):
         elif hasattr(value, "to_dict"):
             return value.to_dict()
         elif isinstance(value, datetime):
-            return value.strftime('%Y-%m-%dT%H:%M:%S')
+            return datetime.timestamp(value)
         elif isinstance(value, Enum):
             return value.value
         else:

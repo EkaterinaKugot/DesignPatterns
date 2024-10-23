@@ -281,21 +281,36 @@ paths:
           schema:
             type: object
             properties:
-              model:
-                type: string
-                default: ""
-              name:
-                type: string
-                default: ""
-              type_filter_name:
-                type: string
-                default: "EQUALE"
-              id:
-                type: string
-                default: ""
-              type_filter_id:
-                type: string
-                default: "EQUALE"
+              storage:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    default: ""
+                  type_filter_name:
+                    type: string
+                    default: "EQUALE"
+                  id:
+                    type: string
+                    default: ""
+                  type_filter_id:
+                    type: string
+                    default: "EQUALE"
+              nomenclature:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    default: ""
+                  type_filter_name:
+                    type: string
+                    default: "EQUALE"
+                  id:
+                    type: string
+                    default: ""
+                  type_filter_id:
+                    type: string
+                    default: "EQUALE"
       responses:
         200:
           description: OK
@@ -330,29 +345,47 @@ paths:
           schema:
             type: object
             properties:
-              model:
-                type: string
-                default: ""
-              name:
-                type: string
-                default: ""
-              type_filter_name:
-                type: string
-                default: "EQUALE"
-              id:
-                type: string
-                default: ""
-              type_filter_id:
-                type: string
-                default: "EQUALE"
-              start_period:
-                type: string
-                format: date-time
-                default: "2024-01-01T00:00:00Z"
-              end_period:
-                type: string
-                format: date-time
-                default: "2024-12-31T23:59:59Z"
+              storage:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    default: ""
+                  type_filter_name:
+                    type: string
+                    default: "EQUALE"
+                  id:
+                    type: string
+                    default: ""
+                  type_filter_id:
+                    type: string
+                    default: "EQUALE"
+              nomenclature:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    default: ""
+                  type_filter_name:
+                    type: string
+                    default: "EQUALE"
+                  id:
+                    type: string
+                    default: ""
+                  type_filter_id:
+                    type: string
+                    default: "EQUALE"
+              period:
+                type: object
+                properties:
+                  start_period:
+                    type: string
+                    format: date-time
+                    default: "2024-01-01T00:00:00Z"
+                  end_period:
+                    type: string
+                    format: date-time
+                    default: "2024-12-31T23:59:59Z"
       responses:
         200:
           description: OK
