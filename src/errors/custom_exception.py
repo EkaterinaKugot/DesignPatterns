@@ -26,10 +26,16 @@ class RequiredLengthException(CustomException):
         self.message = f"Длина аргмента '{argument_name}' со значением '{value}' должна содержать {required_length} символов."
         super().__init__(self.message)
 
-class PermissibleValueException(CustomException):
+class MorePermissibleValueException(CustomException):
     """Исключение для ошибок, связанных с превышением числа"""
     def __init__(self, argument_name: str, value: int, permissible_value: int):
         self.message = f"Аргумент '{argument_name}' со значением '{value}' не должен превышать {permissible_value}."
+        super().__init__(self.message)
+
+class LessPermissibleValueException(CustomException):
+    """Исключение для ошибок, связанных со значением меньше допустимого"""
+    def __init__(self, argument_name: str, value: int, permissible_value: int):
+        self.message = f"Аргумент '{argument_name}' со значением '{value}' должен превышать {permissible_value}."
         super().__init__(self.message)
 
 class EmptyArgumentException(CustomException):

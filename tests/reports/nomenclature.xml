@@ -2,100 +2,72 @@
 <report>
     <item>
         <full_name>Пшеничная мука</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204115957772382238248497910985982624570</id>
+        <group>171021160327055193860082195230821073722</group>
+        <id>171021160723196006427155018425093473082</id>
         <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D8189A0&gt;</range>
+        <range>&lt;src.models.range.range_model object at 0x000001906424F5B0&gt;</range>
     </item>
     <item>
         <full_name>Сахар</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116754490784481691176369747608617786</id>
+        <group>171021160327055193860082195230821073722</group>
+        <id>171021160802424168943123687002620445498</id>
         <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D818AF0&gt;</range>
+        <range>&lt;src.models.range.range_model object at 0x000001906424F5B0&gt;</range>
     </item>
     <item>
         <full_name>Сливочное масло</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116754649240806719793991027337085754</id>
+        <group>171021160327055193860082195230821073722</group>
+        <id>171021160881652331456726558400894354234</id>
         <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D818A00&gt;</range>
+        <range>&lt;src.models.range.range_model object at 0x000001906424F5B0&gt;</range>
     </item>
     <item>
         <full_name>Яйцо</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116754807697131748890964192403800890</id>
+        <group>171021160327055193860082195230821073722</group>
+        <id>171021160960880493970110442267287372602</id>
         <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D818CA0&gt;</range>
+        <range>&lt;src.models.range.range_model object at 0x000001906424F640&gt;</range>
     </item>
     <item>
         <full_name>Ванилин</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116754966153456777331537711781266234</id>
+        <group>171021160327055193860082195230821073722</group>
+        <id>171021161040108656486982364045078840122</id>
         <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D818DC0&gt;</range>
-    </item>
-    <item>
-        <full_name>Пшеничная мука</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116755124609781804420749867970872122</id>
-        <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D818EE0&gt;</range>
-    </item>
-    <item>
-        <full_name>Сахар</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116755283066106830813592931778315066</id>
-        <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D819000&gt;</range>
-    </item>
-    <item>
-        <full_name>Сливочное масло</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116755441522431862184039483736998714</id>
-        <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D819120&gt;</range>
-    </item>
-    <item>
-        <full_name>Яйцо</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116755599978756890137379818428318522</id>
-        <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D819240&gt;</range>
+        <range>&lt;src.models.range.range_model object at 0x000001906424F5B0&gt;</range>
     </item>
     <item>
         <full_name>Молотый имбирь</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116755758435081920109458686088463162</id>
+        <group>171021160327055193860082195230821073722</group>
+        <id>171021161119336819001471600145014604602</id>
         <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D819360&gt;</range>
+        <range>&lt;src.models.range.range_model object at 0x000001906424F5B0&gt;</range>
     </item>
     <item>
         <full_name>Корица</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116755916891406946877226418874499898</id>
+        <group>171021160327055193860082195230821073722</group>
+        <id>171021161198564981516218667323617329978</id>
         <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D819480&gt;</range>
+        <range>&lt;src.models.range.range_model object at 0x000001906424F5B0&gt;</range>
     </item>
     <item>
         <full_name>Разрыхлитель</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116756075347731976981035575635231546</id>
+        <group>171021160327055193860082195230821073722</group>
+        <id>171021161277793144026989337506228618042</id>
         <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D8195A0&gt;</range>
+        <range>&lt;src.models.range.range_model object at 0x000001906424F5B0&gt;</range>
     </item>
     <item>
         <full_name>Мёд</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116756233804057003869837548406850362</id>
+        <group>171021160327055193860082195230821073722</group>
+        <id>171021161357021306541836609776540336954</id>
         <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D8196C0&gt;</range>
+        <range>&lt;src.models.range.range_model object at 0x000001906424F5B0&gt;</range>
     </item>
     <item>
         <full_name>Соль</full_name>
-        <group>204073518494078009928169057462194946874</group>
-        <id>204116756392260382030583280610687730490</id>
+        <group>171021160327055193860082195230821073722</group>
+        <id>171021161436249469058098575279799812922</id>
         <name/>
-        <range>&lt;src.models.range.range_model object at 0x0000023F9D8197E0&gt;</range>
+        <range>&lt;src.models.range.range_model object at 0x000001906424F5B0&gt;</range>
     </item>
 </report>

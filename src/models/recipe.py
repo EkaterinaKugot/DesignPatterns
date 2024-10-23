@@ -6,7 +6,7 @@ from src.models.nomenclature import nomenclature_model
 Модель рецепта
 """
 class recipe_model(base_model_name):
-    __nomenclatures: list[nomenclature_model] = None
+    __nomenclatures: list[list[nomenclature_model, int]] = None
     __number_servings: int = 0
     __cooking_time: str = None
     __cooking_steps: str = None
@@ -15,14 +15,16 @@ class recipe_model(base_model_name):
     Номенклатуры
     """
     @property
-    def nomenclatures(self) -> nomenclature_model:
+    def nomenclatures(self) -> list[list[nomenclature_model, int]]:
         return self.__nomenclatures
     
     @nomenclatures.setter
-    def nomenclatures(self, nomenclatures: list[nomenclature_model]):
+    def nomenclatures(self, nomenclatures: list[list[nomenclature_model, int]]):
         Validator.validate_type("nomenclatures", nomenclatures, list)
         for n in nomenclatures:
-            Validator.validate_type("nomenclature", n, nomenclature_model)
+            Validator.validate_type("nomenclature", n, list)
+            Validator.validate_type("nomenclature", n[0], nomenclature_model)
+            Validator.validate_type("nomenclature", n[1], int)
         self.__nomenclatures = nomenclatures
 
     """

@@ -11,7 +11,7 @@ class nomenclature_manager(abstract_logic):
         ingredient: list[str],
         range: range_model,
         group: group_model = group_model.default_group_source(), 
-    ) -> None:
+    ) -> nomenclature_model:
         nomenclature = nomenclature_model()
         nomenclature.full_name = ingredient
         nomenclature.group = group

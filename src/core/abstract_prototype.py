@@ -3,10 +3,10 @@ from src.errors.validator import Validator
 from src.dto.filter import filter
 
 """
-Абстрактный класс для 
+Абстрактный класс для фильтрации
 """
 class abstract_prototype(ABC):
-    __data = []
+    __data: list = []
 
     def __init__(self, source: list) -> None:
         super().__init__()

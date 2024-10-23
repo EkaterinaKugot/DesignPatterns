@@ -1,9 +1,9 @@
 import unittest
-from src.logics.models_prototype import models_prototype
+from src.logics.filter_prototype import filter_prototype
 from src.dto.filter import filter
 from src.start_service import start_service
 from src.data_reposity import data_reposity
-from src.dto.type_filter import type_filter
+from src.core.filter_type import filter_type
 from src.manager.settings_manager import settings_manager
 
 """
@@ -29,10 +29,10 @@ class test_prototypy(unittest.TestCase):
 
         item_filter = filter()
         item_filter.id = str(item.id)
-        prototype = models_prototype(data)
+        prototype = filter_prototype(data)
 
         # Действие
-        prototype.create(data, item_filter)
+        prototype.create(item_filter)
 
         # Проверка
         assert len(prototype.data) == 1
@@ -51,11 +51,11 @@ class test_prototypy(unittest.TestCase):
 
         item_filter = filter()
         item_filter.id = str(item.id)[:3]
-        item_filter.type_filter_id = type_filter.LIKE
-        prototype = models_prototype(data)
+        item_filter.type_filter_id = filter_type.LIKE
+        prototype = filter_prototype(data)
 
         # Действие
-        prototype.create(data, item_filter)
+        prototype.create(item_filter)
 
         # Проверка
         assert len(prototype.data) >= 1
@@ -74,13 +74,13 @@ class test_prototypy(unittest.TestCase):
 
         item_filter = filter()
         item_filter.name = item.full_name
-        prototype = models_prototype(data)
+        prototype = filter_prototype(data)
 
         # Действие
-        prototype.create(data, item_filter)
+        prototype.create(item_filter)
 
         # Проверка
-        assert len(prototype.data) == 2
+        assert len(prototype.data) == 1
         assert prototype.data[0] == item
 
     """
@@ -95,11 +95,11 @@ class test_prototypy(unittest.TestCase):
 
         item_filter = filter()
         item_filter.name = "чн"
-        item_filter.type_filter_name = type_filter.LIKE
-        prototype = models_prototype(data)
+        item_filter.type_filter_name = filter_type.LIKE
+        prototype = filter_prototype(data)
 
         # Действие
-        prototype.create(data, item_filter)
+        prototype.create(item_filter)
 
         # Проверка
         assert len(prototype.data) > 1
@@ -118,10 +118,10 @@ class test_prototypy(unittest.TestCase):
 
         item_filter = filter()
         item_filter.name = item.name
-        prototype = models_prototype(data)
+        prototype = filter_prototype(data)
 
         # Действие
-        prototype.create(data, item_filter)
+        prototype.create(item_filter)
 
         # Проверка
         assert len(prototype.data) == 1
@@ -139,11 +139,11 @@ class test_prototypy(unittest.TestCase):
 
         item_filter = filter()
         item_filter.name = "р"
-        item_filter.type_filter_name = type_filter.LIKE
-        prototype = models_prototype(data)
+        item_filter.type_filter_name = filter_type.LIKE
+        prototype = filter_prototype(data)
 
         # Действие
-        prototype.create(data, item_filter)
+        prototype.create(item_filter)
 
         # Проверка
         assert len(prototype.data) >= 1
@@ -161,10 +161,10 @@ class test_prototypy(unittest.TestCase):
 
         item_filter = filter()
         item_filter.name = item.name
-        prototype = models_prototype(data)
+        prototype = filter_prototype(data)
 
         # Действие
-        prototype.create(data, item_filter)
+        prototype.create(item_filter)
 
         # Проверка
         assert len(prototype.data) == 2
@@ -182,11 +182,11 @@ class test_prototypy(unittest.TestCase):
 
         item_filter = filter()
         item_filter.name = "ш"
-        item_filter.type_filter_name = type_filter.LIKE
-        prototype = models_prototype(data)
+        item_filter.type_filter_name = filter_type.LIKE
+        prototype = filter_prototype(data)
 
         # Действие
-        prototype.create(data, item_filter)
+        prototype.create(item_filter)
 
         # Проверка
         assert len(prototype.data) == 1
@@ -204,10 +204,10 @@ class test_prototypy(unittest.TestCase):
 
         item_filter = filter()
         item_filter.name = item.name
-        prototype = models_prototype(data)
+        prototype = filter_prototype(data)
 
         # Действие
-        prototype.create(data, item_filter)
+        prototype.create(item_filter)
 
         # Проверка
         assert len(prototype.data) == 1
@@ -225,11 +225,11 @@ class test_prototypy(unittest.TestCase):
 
         item_filter = filter()
         item_filter.name = "НИ"
-        item_filter.type_filter_name = type_filter.LIKE
-        prototype = models_prototype(data)
+        item_filter.type_filter_name = filter_type.LIKE
+        prototype = filter_prototype(data)
 
         # Действие
-        prototype.create(data, item_filter)
+        prototype.create(item_filter)
 
         # Проверка
         assert len(prototype.data) == 2

@@ -3,6 +3,6 @@ from enum import Enum
 """
 Варианты фильтрации
 """
-class type_filter(Enum):
+class filter_type(Enum):
     EQUALE = "EQUALE"
     LIKE = "LIKE"

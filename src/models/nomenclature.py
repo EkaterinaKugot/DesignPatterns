@@ -3,6 +3,9 @@ from src.models.group import group_model
 from src.models.range import range_model
 from src.errors.validator import Validator
 
+"""
+Модель номенклатур
+"""
 class nomenclature_model(base_model_id):
     __full_name: str = ""
     __group: group_model = None

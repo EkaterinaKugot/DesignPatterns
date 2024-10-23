@@ -1,6 +1,9 @@
 from src.core.base_model import base_model_name
 from src.models.settings import settings
 
+"""
+Модель организации
+"""
 class organization_model(base_model_name):
     def __init__(self, settings: settings):
         super().__init__()
