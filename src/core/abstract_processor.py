@@ -11,3 +11,7 @@ class abstract_processor:
     @abstractmethod
     def processor(self, transactions: list[transaction_model]):
         pass
+
+    @abstractmethod
+    def creater(data: dict):
+        pass

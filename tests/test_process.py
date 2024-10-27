@@ -1,7 +1,7 @@
 import unittest
 from src.start_service import start_service
 from src.data_reposity import data_reposity
-from src.logics.process_factory import turnover_process
+from src.logics.turnover_process import turnover_process
 from src.models.turnover import turnover_model
 from src.manager.settings_manager import settings_manager
 from src.errors.custom_exception import TypeException
@@ -37,12 +37,10 @@ class test_process(unittest.TestCase):
 
         # Действие
         turnover = turnover_process.create(self.period)
-        turnover.turnovers = turnovers
 
         # Проверка
         assert turnover.start_period == self.period["start_period"]
         assert turnover.end_period == self.period["end_period"]
-        assert turnover.turnovers == turnovers
 
     """
     Проверка валидации атрибутов
@@ -67,17 +65,13 @@ class test_process(unittest.TestCase):
         with self.assertRaises(TypeException):
             turnover_process.create(period2)
 
-        
-        with self.assertRaises(TypeException):
-            turnover.turnovers = {}
-
 
     """
     Проверка расчета оборотов
     """
     def test_turnover_process_create(self):
         # Подготовка
-        process_turnover = turnover_process.create({})
+        process_turnover = turnover_process.create()
 
         storage = self.reposity.data[data_reposity.storage_key()][0]
         nomenclature1 = self.reposity.data[data_reposity.nomenclature_key()][0]
@@ -121,11 +115,12 @@ class test_process(unittest.TestCase):
             transactions.append(transaction)
         
         # Действие
-        process_turnover.processor(transactions)
-        found = list(filter(lambda item: item.storage == storage and item.nomenclature == nomenclature1, process_turnover.turnovers))
+        turnovers = process_turnover.processor(transactions)
+        found = list(filter(lambda item: item.storage == storage and item.nomenclature == nomenclature1, turnovers))
         print(found[0].turnover)
+
         # Проверка
-        assert len(process_turnover.turnovers) > 0
+        assert len(turnovers) > 0
         assert len(found) == 1
         assert found[0].turnover == 125
 

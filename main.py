@@ -1,7 +1,6 @@
 import connexion
 from src.core.format_reporting import format_reporting
 from src.core.filter_type import filter_type
-from src.errors.validator import Validator
 from src.reports.report_factory import report_factory
 from src.data_reposity import data_reposity
 from src.manager.settings_manager import settings_manager
@@ -10,7 +9,7 @@ from flask import abort, request
 from datetime import datetime
 from src.dto.filter import filter
 from src.logics.filter_prototype import filter_prototype
-from src.logics.process_factory import turnover_process
+from src.logics.turnover_process import turnover_process
 
 app = connexion.FlaskApp(__name__)
 manager = settings_manager()
@@ -122,7 +121,7 @@ Api для получения отчета по оборотам
 """
 @app.route("/api/report/turnover/<format>", methods=["GET"])
 def report_turnover(format: str):
-    process_turnover = turnover_process()
+    process_turnover = turnover_process.create()
     turnovers = process_turnover.processor(reposity.data[ data_reposity.transaction_key()  ])
     
     format = format.upper()
