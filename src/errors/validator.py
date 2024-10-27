@@ -1,5 +1,5 @@
 from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException, EmptyArgumentException
-from src.errors.custom_exception import PermissibleValueException, RequiredLengthException
+from src.errors.custom_exception import MorePermissibleValueException, RequiredLengthException, LessPermissibleValueException
 class Validator:
     @staticmethod
     def validate_type(argument_name: str, value, required_type):
@@ -20,10 +20,16 @@ class Validator:
             raise RequiredLengthException(argument_name, value, required_length)
         
     @staticmethod
-    def validate_permissible_value(argument_name: str, value: int, permissible_value: int):
+    def validate_less_permissible_value(argument_name: str, value: int, permissible_value: int):
         """Проверяет, что число не превышает допустимое значение"""
         if value > permissible_value:
-            raise PermissibleValueException(argument_name, value, permissible_value)
+            raise LessPermissibleValueException(argument_name, value, permissible_value)
+        
+    @staticmethod
+    def validate_more_permissible_value(argument_name: str, value: int, permissible_value: int):
+        """Проверяет, что число превышает необходимое значение"""
+        if value <= permissible_value:
+            raise MorePermissibleValueException(argument_name, value, permissible_value)
 
     @staticmethod
     def validate_not_none(argument_name: str, value):

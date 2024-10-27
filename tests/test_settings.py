@@ -19,8 +19,7 @@ class test_settings(unittest.TestCase):
       # Действие
       result = manager1.open("../123.json")
 
-      # Проверки 
-      print(manager1.error_text)
+      # Проверки
       assert manager1.is_error == True
 
    """

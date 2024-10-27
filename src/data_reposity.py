@@ -47,6 +47,20 @@ class data_reposity(abstract_logic):
         return "recipe"
     
     """
+    Ключ для хранения складов
+    """
+    @staticmethod
+    def storage_key() -> str:
+        return "storage"
+    
+    """
+    Ключ для хранения транзакций
+    """
+    @staticmethod
+    def transaction_key() -> str:
+        return "transaction"
+    
+    """
     Перегрузка абстрактного метода
     """
     def set_exception(self, ex: Exception):

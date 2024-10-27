@@ -4,6 +4,8 @@ import glob
 from src.core.abstract_reference import abstract_reference
 from src.core.abstract_logic import abstract_logic
 from src.core.abstract_report import abstract_report
+from src.core.transaction_type import transaction_type
+from datetime import datetime
 
 """
 Класс для десериализации json отчета обратно в объекты
@@ -70,6 +72,16 @@ class json_deserializer(abstract_logic):
             deserialized_value = self.__deserialize_model(value, new_model_class)
         elif isinstance(value, list):
             deserialized_value = [self.__deserialize(obj, key, item) for item in value]
+        elif isinstance(value, str):
+            try:
+                deserialized_value = transaction_type[value]
+            except:
+                deserialized_value = value  
+        elif key == "period":
+            try:
+                deserialized_value = datetime.fromtimestamp(value)
+            except:
+                deserialized_value = value  
         else:
             deserialized_value = value
         return deserialized_value

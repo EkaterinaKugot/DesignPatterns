@@ -1,5 +1,8 @@
 from src.core.base_model import base_model_name
 
+"""
+Модель групп номенклатур
+"""
 class group_model(base_model_name):
     
     @staticmethod

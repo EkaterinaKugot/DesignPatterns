@@ -6,14 +6,22 @@ from src.models.group import group_model
 from src.models.range import range_model
 from src.errors.validator import Validator
 from src.errors.custom_exception import ArgumentException
+from src.core.abstract_report import abstract_report
 import os
 import re
 
 class recipe_manager(abstract_logic):
     __recipe_directory: str = "./src/docs"
 
-    def __init__(self) -> None:
+    def __init__(self, groups: list[group_model], ranges: list[range_model]) -> None:
+        Validator.validate_type("groups", groups, list)
+        Validator.validate_empty_argument("groups", groups)
+        Validator.validate_type("ranges", ranges, list)
+        Validator.validate_empty_argument("ranges", ranges)
+
         self.__recipe: recipe_model = recipe_model()
+        self.groups = groups
+        self.ranges = ranges
 
     """
     Рецепт
@@ -23,7 +31,7 @@ class recipe_manager(abstract_logic):
         return self.__recipe
     
     """
-    Рецепт
+    Путь к рецептам
     """
     @property
     def recipe_directory(self) -> str:
@@ -35,17 +43,18 @@ class recipe_manager(abstract_logic):
         Validator.validate_empty_argument("recipe_directory", recipe_directory)
         self.__recipe_directory = recipe_directory
 
-    def open(self, file_name: str) -> None:
+    def open(self, file_name: str, def_nomenclatures: list[list[nomenclature_model, int]]) -> None:
         Validator.validate_type("file_name", file_name, str)
         Validator.validate_empty_argument("file_name", file_name)
 
         ingredients, gram = self.__extract_columns_from_table(file_name)
-        list = self.__create_list_nomenclature(ingredients, gram)
+
+        list = self.__create_list_nomenclature(ingredients, gram, def_nomenclatures)
         self.recipe.nomenclatures = list
 
         data_recipe = self.__get_data_recipe(file_name)
 
-        fields = dir(recipe_model)
+        fields = abstract_report.get_class_fields(recipe_model, True)
         for key in data_recipe.keys():
             if key in fields:
                 self.recipe.__setattr__(key, data_recipe[key])
@@ -53,7 +62,10 @@ class recipe_manager(abstract_logic):
     """
     Функция для извлечения данных из таблицы markdown
     """
-    def __extract_columns_from_table(self, file_name: str):
+    def __extract_columns_from_table(
+        self,
+        file_name: str
+    ) -> list[list[str], list[list[int, str]]]:
         file_path = os.path.join(self.recipe_directory, file_name)
 
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -88,17 +100,53 @@ class recipe_manager(abstract_logic):
     """
     Функция для создания списка номенклатур
     """
-    def __create_list_nomenclature(self, ingredients: list[str], gram: list[list[int, str]]) -> list[nomenclature_model]:
-        list = []
+    def __create_list_nomenclature(
+        self, 
+        ingredients: list[str], 
+        gram: list[list[int, str]],
+        def_nomenclatures: list[list[nomenclature_model, int]] = None
+    ) -> list[list[nomenclature_model, int]]:
+        list1: list[list[nomenclature_model, int]] = []
+        if def_nomenclatures is None:
+            self.__create_default_nomenclature(ingredients, gram, list1)
+        else:
+            for ingredient, g in zip(ingredients, gram):
+                for nom in def_nomenclatures:
+                    if ingredient == nom[0].full_name and nom[1] == g[0]:
+                        list1.append(nom)
+                        break
+        return list1
+
+    """
+    Функция для заполнения стандартного списка номенклатур
+    """
+    def __create_default_nomenclature(
+        self,
+        ingredients: list[str], 
+        gram:list[list[int, str]],
+        list1: list
+    ) -> None:
+        name_nomenclature = {}
         for ingredient, g in zip(ingredients, gram):
-            nomenclature = nomenclature_manager.create(ingredient, range_model.create(g[1], g[0]))
-            list.append(nomenclature)
-        return list
+            is_range = False
+            for r in self.ranges:
+                if r.name == g[1]:
+                    range = r
+                    is_range = True
+                    break
+            if ingredient in name_nomenclature.keys():
+                nomenclature = name_nomenclature[ingredient]
+            elif is_range:
+                nomenclature = nomenclature_manager.create(ingredient, range, self.groups[1])
+                name_nomenclature[ingredient] = nomenclature
+            else:
+                ArgumentException("range", range)
+            list1.append([nomenclature, g[0]])
     
     """
     Функция для обработки создания списка номенклатур по всем рецептам
     """
-    def creating_list_nomenclatures_all_recipes(self) -> list[nomenclature_model]:
+    def creating_list_nomenclatures_all_recipes(self) -> list[list[nomenclature_model, int]]:
         md_files = [f for f in os.listdir(self.recipe_directory) if f.endswith('.md')]
 
         ingredients = []
