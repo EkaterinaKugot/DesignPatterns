@@ -132,6 +132,13 @@ def report_turnover(format: str):
     return report.result
 
 """
+Api для получения даты блокировки
+"""
+@app.route("/api/get_date_block", methods=["GET"])
+def get_date_block():
+    return str(manager.current_settings.date_block)
+
+"""
 Api для получения фильтрованных данных по модели
 """
 @app.route("/api/filter/<model>", methods=["POST"])
@@ -241,7 +248,7 @@ def filter_turnover():
 """
 Api для изменения даты блокировки
 """
-@app.route("/api/date_block", methods=["POST"])
+@app.route("/api/post_date_block", methods=["POST"])
 def change_date_block():
     request_data = request.get_json()
     new_date_block = request_data.get("date_block")
