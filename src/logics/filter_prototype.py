@@ -21,6 +21,7 @@ class filter_prototype(abstract_prototype):
 
         self.data = self.__filter_name_id(filterDto.name, filterDto.type_filter_name, "name", filterDto.model)
         self.data = self.__filter_name_id(filterDto.id, filterDto.type_filter_id, "id", filterDto.model)
+        self.data = self.__filter_period(filterDto.period)
         instance = filter_prototype(self.data)
         return instance
     
@@ -43,6 +44,16 @@ class filter_prototype(abstract_prototype):
         else:
             result = self.__filter_internal_model(filterDto_arg, filterDto_type, name_attr, filterDto_model)
 
+        return result
+    
+    def __filter_period(self, filterDto_period: list):
+        if filterDto_period is None or len(filterDto_period) != 2:
+            return self.data
+        
+        result = []
+        for item in self.data:
+            if filterDto_period[0] <= item.period <= filterDto_period[1]:
+                result.append(item)
         return result
 
     """

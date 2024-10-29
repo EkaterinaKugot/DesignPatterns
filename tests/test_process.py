@@ -20,58 +20,12 @@ class test_process(unittest.TestCase):
     start = start_service(reposity, set_manager)
     start.create()
 
-    period = {
-            "start_period": datetime(2024, 1, 1),
-            "end_period": datetime(2024, 12, 30)
-        }
-    
-    """
-    Проверка создания процесса для обработки оборотов
-    """
-    def test_turnover_process(self):
-        # Подготовка
-        
-        storage = self.reposity.data[data_reposity.storage_key()][0]
-        nomenclature = self.reposity.data[data_reposity.nomenclature_key()][0]
-        turnovers = [turnover_model.create(storage, 100, nomenclature, nomenclature.range)]
-
-        # Действие
-        turnover = turnover_process.create(self.period)
-
-        # Проверка
-        assert turnover.start_period == self.period["start_period"]
-        assert turnover.end_period == self.period["end_period"]
-
-    """
-    Проверка валидации атрибутов
-    """
-    def test_turnover_process_fail(self):
-        # Подготовка
-        turnover = turnover_process.create(self.period)
-        period1 = {
-            "start_period": 123,
-            "end_period": datetime(2024, 12, 30)
-        }
-
-        period2 = {
-            "start_period": datetime(2024, 1, 1),
-            "end_period": "str"
-        }
-        
-        # Проверка
-        with self.assertRaises(TypeException):
-            turnover_process.create(period1)
-
-        with self.assertRaises(TypeException):
-            turnover_process.create(period2)
-
-
     """
     Проверка расчета оборотов
     """
     def test_turnover_process_create(self):
         # Подготовка
-        process_turnover = turnover_process.create()
+        process_turnover = turnover_process()
 
         storage = self.reposity.data[data_reposity.storage_key()][0]
         nomenclature1 = self.reposity.data[data_reposity.nomenclature_key()][0]
