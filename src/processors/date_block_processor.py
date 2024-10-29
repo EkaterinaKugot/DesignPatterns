@@ -37,7 +37,10 @@ class date_block_processor(abstract_processor):
 
         result = []
         if len(turnovers.values()) == 0:
-            os.remove(path)
+            try:
+                os.remove(path)
+            except:
+                pass
         else:
             report = report_factory(self.settings_manager).create(format_reporting.JSON)
             report.create(list(turnovers.values()))

@@ -18,28 +18,17 @@ class turnover_process(abstract_processor):
     def processor(self, transactions: list[transaction_model]) -> dict:
         date_block = self.settings_manager.current_settings.date_block
         Validator.validate_not_none("date_block", date_block)
+        path = os.path.join(self.settings_manager.current_settings.json_folder , self.file_name) 
 
         # Рассчитываем обороты после date_block
         turnovers: dict = {}
-        for transaction in transactions:
-            if  transaction.period > date_block:
-                self.calc_turnover(turnovers, transaction)
-
-        # Получаем обороты до date_block
-        turnovers_date_block = {}
-        try:
-            abstract_logic.file_search(self.file_name)
+        if os.path.exists(path):
             deserializer = json_deserializer(turnover_model)
             deserializer.open(self.file_name)
-            turnovers_date_block = {(tur.storage.id, tur.nomenclature.id): tur for tur in deserializer.model_objects}
-        except:
-            pass
+            turnovers = {(tur.storage.id, tur.nomenclature.id): tur for tur in deserializer.model_objects}
         
-        # Плюсуем обороты до date_block
-        for key, item in turnovers_date_block.items():
-            if key in turnovers.keys():
-                turnovers[key].turnover = turnovers[key].turnover + item.turnover 
-            else:
-                turnovers[key] = item
-        
+        for transaction in transactions:
+            if transaction.period > date_block:
+                self.calc_turnover(turnovers, transaction)
+
         return turnovers

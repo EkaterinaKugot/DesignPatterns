@@ -28,6 +28,11 @@ class abstract_processor:
     def file_name(self) -> str:
         return self.__file_name
     
+    @file_name.setter
+    def file_name(self, file_name: str):
+        Validator.validate_type("file_name", file_name, str)
+        self.__file_name = file_name
+    
     @abstractmethod
     def processor(self, transactions: list[transaction_model]):
         pass

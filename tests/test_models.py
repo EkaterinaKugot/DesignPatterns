@@ -5,7 +5,6 @@ from src.models.range import range_model
 from src.models.group import group_model
 from src.models.storage import storage_model
 from src.models.organization import organization_model
-from src.models.storage import storage_model
 from src.models.transaction import transaction_model
 from src.models.turnover import turnover_model
 
@@ -14,8 +13,7 @@ from src.core.transaction_type import transaction_type
 from src.manager.nomenclature_manager import nomenclature_manager
 from src.manager.settings_manager import settings_manager
 
-from src.errors.custom_exception import ArgumentException, TypeException, PermissibleLengthException, LessPermissibleValueException
-from src.errors.custom_exception import MorePermissibleValueException, RequiredLengthException, EmptyArgumentException
+from src.errors.custom_exception import TypeException, PermissibleLengthException, LessPermissibleValueException
 
 class test_models(unittest.TestCase):
 

@@ -22,6 +22,11 @@ class settings:
     @property
     def json_folder(self) -> str:
         return self.__json_folder
+    
+    @json_folder.setter
+    def json_folder(self, json_folder: str):
+        Validator.validate_type("json_folder", json_folder, str)
+        self.__json_folder = json_folder
 
     @property
     def organization_name(self) -> str:
