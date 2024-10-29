@@ -38,7 +38,6 @@ class json_deserializer(abstract_logic):
             data_list = json.load(stream)
 
         Validator.validate_type("data_list", data_list, list)
-        Validator.validate_empty_argument("data_list", data_list)
 
         objects = []
         

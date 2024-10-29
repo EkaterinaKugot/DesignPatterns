@@ -4,6 +4,8 @@ from src.errors.validator import Validator
 from src.manager.settings_manager import settings_manager
 from src.reports.json_deserializer import json_deserializer
 from src.models.turnover import turnover_model
+from src.core.abstract_logic import abstract_logic
+import os
 
 class turnover_process(abstract_processor):
 
@@ -24,10 +26,15 @@ class turnover_process(abstract_processor):
                 self.calc_turnover(turnovers, transaction)
 
         # Получаем обороты до date_block
-        deserializer = json_deserializer(turnover_model)
-        deserializer.open(self.file_name)
-        turnovers_date_block = {(tur.storage.id, tur.nomenclature.id): tur for tur in deserializer.model_objects}
-
+        turnovers_date_block = {}
+        try:
+            abstract_logic.file_search(self.file_name)
+            deserializer = json_deserializer(turnover_model)
+            deserializer.open(self.file_name)
+            turnovers_date_block = {(tur.storage.id, tur.nomenclature.id): tur for tur in deserializer.model_objects}
+        except:
+            pass
+        
         # Плюсуем обороты до date_block
         for key, item in turnovers_date_block.items():
             if key in turnovers.keys():

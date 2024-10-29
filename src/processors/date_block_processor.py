@@ -33,13 +33,20 @@ class date_block_processor(abstract_processor):
             if self.process_start_date <= transaction.period <= date_block:
                 self.calc_turnover(turnovers, transaction)
 
-        report = report_factory(self.settings_manager).create(format_reporting.JSON)
-        report.create(list(turnovers.values()))
-
         path = os.path.join(self.settings_manager.current_settings.json_folder, self.file_name)
+
+        result = []
+        if len(turnovers.values()) == 0:
+            os.remove(path)
+        else:
+            report = report_factory(self.settings_manager).create(format_reporting.JSON)
+            report.create(list(turnovers.values()))
+            result = report.result
+
         try:
-            with open(path , 'w', encoding='utf-8') as f:
-                f.write(report.result)
+            if len(result) != 0:
+                with open(path , 'w', encoding='utf-8') as f:
+                    f.write(result)
             return True
         except:
             pass
