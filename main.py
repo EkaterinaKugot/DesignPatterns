@@ -5,11 +5,16 @@ from src.reports.report_factory import report_factory
 from src.data_reposity import data_reposity
 from src.manager.settings_manager import settings_manager
 from src.start_service import start_service
+from src.processors.turnover_process import turnover_process
+from src.processors.date_block_processor import date_block_processor
+from src.processors.process_factory import process_factory
+from src.errors.custom_exception import FileWriteException
+
 from flask import abort, request
 from datetime import datetime
 from src.dto.filter import filter
 from src.logics.filter_prototype import filter_prototype
-from src.logics.turnover_process import turnover_process
+
 
 app = connexion.FlaskApp(__name__)
 manager = settings_manager()
@@ -17,6 +22,10 @@ manager.open("settings.json")
 reposity = data_reposity()
 start = start_service(reposity, manager)
 start.create()
+
+factory = process_factory(manager)
+factory.register_process('turnover', turnover_process)
+factory.register_process('date_block', date_block_processor)
 
 # http://127.0.0.1:8080/api/ui/
 
@@ -121,7 +130,7 @@ Api для получения отчета по оборотам
 """
 @app.route("/api/report/turnover/<format>", methods=["GET"])
 def report_turnover(format: str):
-    process_turnover = turnover_process()
+    process_turnover = factory.create("turnover")
     turnovers = process_turnover.processor(reposity.data[ data_reposity.transaction_key()  ])
     
     format = format.upper()
@@ -224,7 +233,7 @@ def filter_turnover():
     if storage is None or nomenclature is None:
          abort(400)
 
-    process_turnover = turnover_process()
+    process_turnover = factory.create("turnover")
     turnovers = process_turnover.processor(prototype_period.data)
     
     if not turnovers:
@@ -234,7 +243,7 @@ def filter_turnover():
     nomenclature_filter: filter = filter.create(nomenclature, "nomenclature")
 
     # Фультруем turnover
-    prototype = filter_prototype(turnovers)
+    prototype = filter_prototype(list(turnovers.values()))
     prototype.create(storage_filter)
     prototype.create(nomenclature_filter)
 
@@ -261,7 +270,18 @@ def change_date_block():
     except:
         abort(500)
 
-    manager.current_settings.date_block = new_date_block
+    if new_date_block != manager.current_settings.date_block:
+        manager.current_settings.date_block = new_date_block
+        data = reposity.data[data_reposity.transaction_key()]
+        if not data:
+            abort(404)
+
+        process_turnover = factory.create("date_block")
+        if process_turnover.processor(data):
+            return "Ok"
+        else:
+            abort(400)
+            FileWriteException("turnovers", process_turnover.file_name)
 
     return "Ok"
 

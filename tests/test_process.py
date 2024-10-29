@@ -1,12 +1,12 @@
 import unittest
 from src.start_service import start_service
 from src.data_reposity import data_reposity
-from src.logics.turnover_process import turnover_process
-from src.models.turnover import turnover_model
+from src.processors.turnover_process import turnover_process
 from src.manager.settings_manager import settings_manager
-from src.errors.custom_exception import TypeException
 from src.models.transaction import transaction_model
 from src.core.transaction_type import transaction_type
+from src.processors.process_factory import process_factory
+from src.processors.date_block_processor import date_block_processor
 from datetime import datetime
 import random
 
@@ -19,13 +19,18 @@ class test_process(unittest.TestCase):
     reposity = data_reposity()
     start = start_service(reposity, set_manager)
     start.create()
+    set_manager.current_settings.date_block = datetime(1900, 1, 1)
+
+    factory = process_factory(set_manager)
+    factory.register_process('turnover', turnover_process)
+    factory.register_process('date_block', date_block_processor)
 
     """
     Проверка расчета оборотов
     """
     def test_turnover_process_create(self):
         # Подготовка
-        process_turnover = turnover_process()
+        process_turnover = self.factory.create('turnover')
 
         storage = self.reposity.data[data_reposity.storage_key()][0]
         nomenclature1 = self.reposity.data[data_reposity.nomenclature_key()][0]
@@ -70,8 +75,7 @@ class test_process(unittest.TestCase):
         
         # Действие
         turnovers = process_turnover.processor(transactions)
-        found = list(filter(lambda item: item.storage == storage and item.nomenclature == nomenclature1, turnovers))
-        print(found[0].turnover)
+        found = [turnovers[key] for key in turnovers if key == (storage.id, nomenclature1.id)]
 
         # Проверка
         assert len(turnovers) > 0

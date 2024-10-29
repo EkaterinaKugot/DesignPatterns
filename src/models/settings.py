@@ -14,6 +14,14 @@ class settings:
     __type_property = ""
     __report_format = format_reporting.JSON
     __date_block = None
+    __json_folder: str = "./json"
+
+    """
+    Путь для сохранение всех json файлов
+    """
+    @property
+    def json_folder(self) -> str:
+        return self.__json_folder
 
     @property
     def organization_name(self) -> str:

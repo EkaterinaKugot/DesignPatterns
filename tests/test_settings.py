@@ -30,7 +30,7 @@ class test_settings(unittest.TestCase):
       manager1 = settings_manager()
 
       # Действие
-      result = manager1.open("../settings.json")
+      result = manager1.open("../json/settings.json")
 
       # Проверки 
       assert result is True
@@ -110,6 +110,9 @@ class test_settings(unittest.TestCase):
 
       with self.assertRaises(TypeException):
             sets.report_format = "kate"
+
+      with self.assertRaises(TypeException):
+            sets.date_block = 45
 
    """
    Проверить некорректную длину атрибутов

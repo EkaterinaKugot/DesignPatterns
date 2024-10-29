@@ -444,6 +444,14 @@ paths:
           description: OK
           schema:
             type: object
+        400:
+          description: Ошибка записи оборотов в файл
+          schema:
+            type: object
+        404:
+          description: Данных для фильтрации по модели нет.
+          schema:
+            type: object
         500:
           description: Неверный формат даты блокировки
         default:

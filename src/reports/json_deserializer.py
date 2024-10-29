@@ -34,7 +34,7 @@ class json_deserializer(abstract_logic):
     def __deserialize_data(self, file_name: str):
         full_path = self.file_search(file_name)
 
-        with open(full_path) as stream:
+        with open(full_path, encoding='utf-8') as stream:
             data_list = json.load(stream)
 
         Validator.validate_type("data_list", data_list, list)

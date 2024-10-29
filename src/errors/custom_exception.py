@@ -43,3 +43,9 @@ class EmptyArgumentException(CustomException):
     def __init__(self, argument_name: str, message: str = "Аргумент"):
         self.message = f"{message} '{argument_name}' не должен быть пуст."
         super().__init__(self.message)
+
+class FileWriteException(CustomException):
+    """Исключение для ошибок, связанных проблемой записи в файл."""
+    def __init__(self, argument_name: str, file_name: str, message: str = "Данные из"):
+        self.message = f"{message} '{argument_name}' не получилось записать в файл {file_name}."
+        super().__init__(self.message)
