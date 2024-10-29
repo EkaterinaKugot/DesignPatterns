@@ -121,7 +121,7 @@ Api для получения отчета по оборотам
 """
 @app.route("/api/report/turnover/<format>", methods=["GET"])
 def report_turnover(format: str):
-    process_turnover = turnover_process.create()
+    process_turnover = turnover_process()
     turnovers = process_turnover.processor(reposity.data[ data_reposity.transaction_key()  ])
     
     format = format.upper()
@@ -202,15 +202,23 @@ def filter_turnover():
         abort(404)
 
     request_data = request.get_json()
-    storage = request_data.get("storage")
-    nomenclature = request_data.get("nomenclature")
     period = request_data.get("period")
 
-    if storage is None or nomenclature is None or period is None:
+    if period is None:
          abort(400)
 
-    process_turnover = turnover_process.create(period)
-    turnovers = process_turnover.processor(data)
+    period_filter: filter = filter.create(period)
+    prototype_period = filter_prototype(data)
+    prototype_period.create(period_filter)
+
+    storage = request_data.get("storage")
+    nomenclature = request_data.get("nomenclature")
+
+    if storage is None or nomenclature is None:
+         abort(400)
+
+    process_turnover = turnover_process()
+    turnovers = process_turnover.processor(prototype_period.data)
     
     if not turnovers:
         return {}

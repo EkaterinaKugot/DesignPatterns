@@ -1,6 +1,6 @@
 from src.errors.validator import Validator
 from src.core.filter_type import filter_type
-from src.core.abstract_reference import abstract_reference
+from datetime import datetime, timedelta
 
 
 """
@@ -14,6 +14,7 @@ class filter:
     __type_filter_id = filter_type.EQUALE
 
     __model: str = ""
+    __period: list[datetime] = None
 
     @property
     def name(self) -> str:
@@ -60,6 +61,16 @@ class filter:
         Validator.validate_type("model", model, str)
         self.__model = model
 
+    @property
+    def period(self) -> list:
+        return self.__period
+    
+    @period.setter
+    def period(self, period: list):
+        Validator.validate_type("period", period, list)
+        Validator.validate_more_permissible_value("end_period", period[1], period[0])
+        self.__period = period
+
     @staticmethod
     def create(data: dict, model: str = "") -> filter:
         Validator.validate_not_none("data", data)
@@ -70,12 +81,21 @@ class filter:
         type_filter_id = getattr(filter_type, type_filter_id, filter_type.EQUALE)
 
         filt = filter()
-        filt.name = data.get('name')
-        filt.id = data.get('id')
+        filt.name = data.get('name', "")
+        filt.id = data.get('id', "")
         filt.type_filter_id = type_filter_id
         filt.type_filter_name = type_filter_name
         if model is not None:
             filt.model = model
+        
+        start_period = data.get('start_period')
+        end_period = data.get('end_period')
+        try:
+            start_period = datetime.strptime(start_period, "%Y-%m-%dT%H:%M:%SZ")
+            end_period = datetime.strptime(end_period, "%Y-%m-%dT%H:%M:%SZ")
+            filt.period = [start_period, end_period]
+        except:
+            pass
 
         return filt
     
