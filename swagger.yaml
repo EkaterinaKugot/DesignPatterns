@@ -404,5 +404,34 @@ paths:
         default:
           description: Неизвестная ошибка
 
+  /date_block:
+    post:
+      summary: Изменение даты блокировки
+      operationId: main.change_date_block
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: change_date_block
+          required: true
+          schema:
+            type: object
+            properties:
+              date_block:
+                type: string
+                format: date-time
+                default: "2024-10-01T00:00:01Z"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Неверный формат даты блокировки
+        default:
+          description: Неизвестная ошибка
+
 
 

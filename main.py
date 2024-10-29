@@ -238,6 +238,26 @@ def filter_turnover():
 
     return report.result
 
+"""
+Api для изменения даты блокировки
+"""
+@app.route("/api/date_block", methods=["POST"])
+def change_date_block():
+    request_data = request.get_json()
+    new_date_block = request_data.get("date_block")
+
+    if new_date_block is None:
+        abort(500)
+
+    try:
+        new_date_block = datetime.strptime(new_date_block, "%Y-%m-%dT%H:%M:%SZ")
+    except:
+        abort(500)
+
+    manager.current_settings.date_block = new_date_block
+
+    return "Ok"
+
 if __name__ == "__main__":
     app.add_api("swagger.yaml")
     app.run(port = 8080)
