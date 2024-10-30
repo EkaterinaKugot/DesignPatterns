@@ -5,8 +5,6 @@ from src.reports.report_factory import report_factory
 from src.data_reposity import data_reposity
 from src.manager.settings_manager import settings_manager
 from src.start_service import start_service
-from src.processors.turnover_process import turnover_process
-from src.processors.date_block_processor import date_block_processor
 from src.processors.process_factory import process_factory
 from src.errors.custom_exception import FileWriteException
 
@@ -24,8 +22,6 @@ start = start_service(reposity, manager)
 start.create()
 
 factory = process_factory(manager)
-factory.register_process('turnover', turnover_process)
-factory.register_process('date_block', date_block_processor)
 
 # http://127.0.0.1:8080/api/ui/
 
@@ -272,6 +268,14 @@ def change_date_block():
 
     if new_date_block != manager.current_settings.date_block:
         manager.current_settings.date_block = new_date_block
+
+        # Сохраняем date_block в settings.json
+        set_data = manager.open_settings_json()
+        set_data["date_block"] = datetime.timestamp(new_date_block)
+        if not manager.change_settings_json(set_data):
+            abort(400)
+
+        # Рассчитываем обороты
         data = reposity.data[data_reposity.transaction_key()]
         if not data:
             abort(404)

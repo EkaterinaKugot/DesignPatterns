@@ -1,8 +1,1 @@
-{
-    "organization_name": "Pizza",
-    "inn": "123456789000",
-    "account": "98765432198",
-    "сorrespondent_account": "12003400567",
-    "bik": "617283945",
-    "type_property": "qwert"
-}
+{"organization_name": "Pizza", "inn": "123456789000", "account": "98765432198", "\u0441orrespondent_account": "12003400567", "bik": "617283945", "type_property": "qwert", "date_block": 1604044801.0}

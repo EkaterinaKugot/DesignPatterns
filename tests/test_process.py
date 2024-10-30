@@ -1,12 +1,10 @@
 import unittest
 from src.start_service import start_service
 from src.data_reposity import data_reposity
-from src.processors.turnover_process import turnover_process
 from src.manager.settings_manager import settings_manager
 from src.models.transaction import transaction_model
 from src.core.transaction_type import transaction_type
 from src.processors.process_factory import process_factory
-from src.processors.date_block_processor import date_block_processor
 
 from datetime import datetime, timedelta
 import random
@@ -25,8 +23,6 @@ class test_process(unittest.TestCase):
     set_manager.current_settings.date_block = datetime(1900, 1, 1)
 
     factory = process_factory(set_manager)
-    factory.register_process('turnover', turnover_process)
-    factory.register_process('date_block', date_block_processor)
 
     """
     Проверка расчета оборотов
@@ -37,12 +33,13 @@ class test_process(unittest.TestCase):
 
         storage = self.reposity.data[data_reposity.storage_key()][0]
         nomenclature1 = self.reposity.data[data_reposity.nomenclature_key()][0]
+        range1 = self.reposity.data[data_reposity.range_key()][0]
 
         transactions = self.creatу_artificial_transactions(storage, nomenclature1)
         
         # Действие
         turnovers = process_turnover.processor(transactions)
-        found = [turnovers[key] for key in turnovers if key == (storage.id, nomenclature1.id)]
+        found = [turnovers[key] for key in turnovers if key == (storage.id, nomenclature1.id, range1.id)]
 
         # Проверка
         assert len(turnovers) > 0

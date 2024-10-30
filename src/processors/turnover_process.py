@@ -2,9 +2,8 @@ from src.core.abstract_processor import abstract_processor
 from src.models.transaction import transaction_model
 from src.errors.validator import Validator
 from src.manager.settings_manager import settings_manager
-from src.reports.json_deserializer import json_deserializer
-from src.models.turnover import turnover_model
-from src.core.abstract_logic import abstract_logic
+from src.processors.calculation_process import calculation_process
+from src.manager.date_block_manager import date_block_manager
 import os
 
 class turnover_process(abstract_processor):
@@ -20,15 +19,13 @@ class turnover_process(abstract_processor):
         Validator.validate_not_none("date_block", date_block)
         path = os.path.join(self.settings_manager.current_settings.json_folder , self.file_name) 
 
-        # Рассчитываем обороты после date_block
-        turnovers: dict = {}
-        if os.path.exists(path):
-            deserializer = json_deserializer(turnover_model)
-            deserializer.open(self.file_name)
-            turnovers = {(tur.storage.id, tur.nomenclature.id): tur for tur in deserializer.model_objects}
+        # Получаем оброты до date_block
+        turnovers: dict = date_block_manager.read(path)
+        print(turnovers)
         
+        # Рассчитываем обороты после date_block
         for transaction in transactions:
             if transaction.period > date_block:
-                self.calc_turnover(turnovers, transaction)
+                calculation_process.processor(turnovers, transaction)
 
         return turnovers

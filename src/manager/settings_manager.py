@@ -1,5 +1,4 @@
 import json
-import glob
 from src.models.settings import settings
 from src.core.abstract_logic import abstract_logic
 from src.errors.validator import Validator
@@ -35,10 +34,7 @@ class settings_manager(abstract_logic):
         return cls.instance
     
     def convert(self) -> bool:
-        path = f"./**/{self.__file_name}"
-        full_name = glob.glob(path, recursive=True)[0]
-        with open(full_name) as stream:
-            data = json.load(stream)
+        data = self.open_settings_json()
         
         fields = dir(self.__settings)
         for key in data.keys():
@@ -48,6 +44,24 @@ class settings_manager(abstract_logic):
                 self.set_exception(f"Неожиданный ключ {key} со значением {data[key]}.")
         return True
 
+    def open_settings_json(self):
+        full_name = self.file_search(self.__file_name)
+
+        with open(full_name, encoding='utf-8') as stream:
+            data = json.load(stream)
+        return data
+
+    def change_settings_json(self, data: dict) -> bool:
+        full_name = self.file_search(self.__file_name)
+        data = json.dumps(data)
+
+        try:
+            with open(full_name, 'w', encoding='utf-8') as f:
+                f.write(data)
+            return True
+        except:
+            return False
+        
 
     def open(self, file_name: str = "") -> bool:
         Validator.validate_type("file_name", file_name, str)

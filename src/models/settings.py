@@ -102,5 +102,8 @@ class settings:
     
     @date_block.setter
     def date_block(self, date_block: datetime):
+        if isinstance(date_block, float):
+            date_block = datetime.fromtimestamp(date_block)
+
         Validator.validate_type("date_block", date_block, datetime)
         self.__date_block = date_block

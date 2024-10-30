@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from src.errors.validator import Validator
 from src.models.transaction import transaction_model
-from src.logics.transaction_service import transaction_service
 from src.models.turnover import turnover_model
 from src.manager.settings_manager import settings_manager
 
@@ -36,20 +35,3 @@ class abstract_processor:
     @abstractmethod
     def processor(self, transactions: list[transaction_model]):
         pass
-
-    def calc_turnover(self, turnovers: dict, transaction: transaction_model) -> None:
-        quantity = 0
-        turnover_exists = False 
-        current_key = (transaction.storage.id, transaction.nomenclature.id)
-        if current_key in turnovers.keys():
-            quantity = turnovers[current_key].turnover
-            turnover_exists = True
-            
-        cond_transaction = transaction_service(transaction.type_transaction)
-        quantity = cond_transaction.transaction(quantity, transaction.quantity)
-            
-        if turnover_exists:
-            turnovers[current_key].turnover = int(quantity)
-        else:
-            turnover = turnover_model.create(transaction.storage, int(quantity), transaction.nomenclature, transaction.range)
-            turnovers[current_key] = turnover
