@@ -1,6 +1,6 @@
 from src.errors.validator import Validator
 from src.core.format_reporting import format_reporting
-from src.core.abstract_report import abstract_report
+from datetime import datetime
 
 """
 Настройки
@@ -13,6 +13,20 @@ class settings:
     __bik = ""
     __type_property = ""
     __report_format = format_reporting.JSON
+    __date_block = None
+    __json_folder: str = "./json"
+
+    """
+    Путь для сохранение всех json файлов
+    """
+    @property
+    def json_folder(self) -> str:
+        return self.__json_folder
+    
+    @json_folder.setter
+    def json_folder(self, json_folder: str):
+        Validator.validate_type("json_folder", json_folder, str)
+        self.__json_folder = json_folder
 
     @property
     def organization_name(self) -> str:
@@ -81,3 +95,15 @@ class settings:
     def report_format(self, report_format: format_reporting):
         Validator.validate_type("report_format", report_format, format_reporting)
         self.__report_format = report_format
+
+    @property
+    def date_block(self) -> datetime:
+        return self.__date_block
+    
+    @date_block.setter
+    def date_block(self, date_block: datetime):
+        if isinstance(date_block, float):
+            date_block = datetime.fromtimestamp(date_block)
+
+        Validator.validate_type("date_block", date_block, datetime)
+        self.__date_block = date_block

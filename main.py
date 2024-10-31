@@ -5,11 +5,14 @@ from src.reports.report_factory import report_factory
 from src.data_reposity import data_reposity
 from src.manager.settings_manager import settings_manager
 from src.start_service import start_service
+from src.processors.process_factory import process_factory
+from src.errors.custom_exception import FileWriteException
+
 from flask import abort, request
 from datetime import datetime
 from src.dto.filter import filter
 from src.logics.filter_prototype import filter_prototype
-from src.logics.turnover_process import turnover_process
+
 
 app = connexion.FlaskApp(__name__)
 manager = settings_manager()
@@ -17,6 +20,8 @@ manager.open("settings.json")
 reposity = data_reposity()
 start = start_service(reposity, manager)
 start.create()
+
+factory = process_factory(manager)
 
 # http://127.0.0.1:8080/api/ui/
 
@@ -121,7 +126,7 @@ Api для получения отчета по оборотам
 """
 @app.route("/api/report/turnover/<format>", methods=["GET"])
 def report_turnover(format: str):
-    process_turnover = turnover_process()
+    process_turnover = factory.create("turnover")
     turnovers = process_turnover.processor(reposity.data[ data_reposity.transaction_key()  ])
     
     format = format.upper()
@@ -130,6 +135,13 @@ def report_turnover(format: str):
     report.create(turnovers)
 
     return report.result
+
+"""
+Api для получения даты блокировки
+"""
+@app.route("/api/get_date_block", methods=["GET"])
+def get_date_block():
+    return str(manager.current_settings.date_block)
 
 """
 Api для получения фильтрованных данных по модели
@@ -217,7 +229,7 @@ def filter_turnover():
     if storage is None or nomenclature is None:
          abort(400)
 
-    process_turnover = turnover_process()
+    process_turnover = factory.create("turnover")
     turnovers = process_turnover.processor(prototype_period.data)
     
     if not turnovers:
@@ -227,7 +239,7 @@ def filter_turnover():
     nomenclature_filter: filter = filter.create(nomenclature, "nomenclature")
 
     # Фультруем turnover
-    prototype = filter_prototype(turnovers)
+    prototype = filter_prototype(list(turnovers.values()))
     prototype.create(storage_filter)
     prototype.create(nomenclature_filter)
 
@@ -237,6 +249,45 @@ def filter_turnover():
     report.create(prototype.data)
 
     return report.result
+
+"""
+Api для изменения даты блокировки
+"""
+@app.route("/api/post_date_block", methods=["POST"])
+def change_date_block():
+    request_data = request.get_json()
+    new_date_block = request_data.get("date_block")
+
+    if new_date_block is None:
+        abort(500)
+
+    try:
+        new_date_block = datetime.strptime(new_date_block, "%Y-%m-%dT%H:%M:%SZ")
+    except:
+        abort(500)
+
+    if new_date_block != manager.current_settings.date_block:
+        manager.current_settings.date_block = new_date_block
+
+        # Сохраняем date_block в settings.json
+        set_data = manager.open_settings_json()
+        set_data["date_block"] = datetime.timestamp(new_date_block)
+        if not manager.change_settings_json(set_data):
+            abort(400)
+
+        # Рассчитываем обороты
+        data = reposity.data[data_reposity.transaction_key()]
+        if not data:
+            abort(404)
+
+        process_turnover = factory.create("date_block")
+        if process_turnover.processor(data):
+            return "Ok"
+        else:
+            abort(400)
+            FileWriteException("turnovers", process_turnover.file_name)
+
+    return "Ok"
 
 if __name__ == "__main__":
     app.add_api("swagger.yaml")
