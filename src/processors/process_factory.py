@@ -4,6 +4,7 @@ from src.core.abstract_logic import abstract_logic
 from src.core.abstract_processor import abstract_processor
 from src.processors.turnover_process import turnover_process
 from src.processors.date_block_processor import date_block_processor
+from src.processors.calculation_process import calculation_process
 
 class process_factory(abstract_logic):
     __settings_manager: settings_manager = None
@@ -16,6 +17,7 @@ class process_factory(abstract_logic):
 
         self.register_process('turnover', turnover_process)
         self.register_process('date_block', date_block_processor)
+        self.register_process('calculation', calculation_process)
 
     def register_process(self, process_name: str, process_class) -> None:
         """Регистрирует новый процесс в фабрике."""
