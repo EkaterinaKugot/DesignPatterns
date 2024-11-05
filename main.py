@@ -259,9 +259,6 @@ def change_date_block():
     request_data = request.get_json()
     new_date_block = request_data.get("date_block")
 
-    if new_date_block is None:
-        abort(500)
-
     try:
         new_date_block = datetime.strptime(new_date_block, "%Y-%m-%dT%H:%M:%SZ")
     except:
@@ -270,20 +267,12 @@ def change_date_block():
     if new_date_block != manager.current_settings.date_block:
         manager.current_settings.date_block = new_date_block
 
-        # Сохраняем date_block в settings.json
-        observe_service.raise_event(event_type.CHANGE_DATE_BLOCK, date_block=new_date_block)
-
         # Рассчитываем обороты
         data = reposity.data[data_reposity.transaction_key()]
         if not data:
             abort(404)
 
-        process_turnover = factory.create("date_block")
-        if process_turnover.processor(data):
-            return "Ok"
-        else:
-            abort(400)
-            FileWriteException("turnovers", process_turnover.file_name)
+        observe_service.raise_event(event_type.CHANGE_DATE_BLOCK, date_block=new_date_block, data=data)
 
     return "Ok"
 

@@ -119,10 +119,12 @@ class settings_manager(abstract_logic):
     def handle_event(self, type: event_type, **kwargs):
         super().handle_event(type, **kwargs)
 
-        new_date_block = kwargs.get("date_block")
         if type == event_type.CHANGE_DATE_BLOCK:
+            new_date_block = kwargs.get("date_block")
+            Validator.validate_not_none("new_date_block", new_date_block)
             # Сохраняем date_block в settings.json
             set_data = self.open_settings_json()
             set_data["date_block"] = datetime.timestamp(new_date_block)
+
             if not self.change_settings_json(set_data):
                 FileWriteException("set_data", self.__file_name)

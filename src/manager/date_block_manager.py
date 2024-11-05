@@ -49,4 +49,4 @@ class date_block_manager(abstract_logic):
         self._inner_set_exception(ex)
 
     def handle_event(self, type: event_type, **kwargs):
-        super().handle_event(type, kwargs)
+        super().handle_event(type, **kwargs)
