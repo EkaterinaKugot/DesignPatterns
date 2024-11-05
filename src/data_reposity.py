@@ -1,4 +1,5 @@
 from src.core.abstract_logic import abstract_logic
+from src.core.evet_type import event_type
 
 """
 Репозиторий
@@ -65,6 +66,9 @@ class data_reposity(abstract_logic):
     """
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
+
+    def handle_event(self, type: event_type, **kwargs):
+        super().handle_event(type, kwargs)
 
     """
     Получить список всех ключей

@@ -4,6 +4,7 @@ from src.models.turnover import turnover_model
 from src.reports.report_factory import report_factory
 from src.core.format_reporting import format_reporting
 from src.manager.settings_manager import settings_manager
+from src.core.evet_type import event_type
 import os
 
 """
@@ -46,3 +47,6 @@ class date_block_manager(abstract_logic):
 
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
+
+    def handle_event(self, type: event_type, **kwargs):
+        super().handle_event(type, kwargs)

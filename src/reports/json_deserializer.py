@@ -5,6 +5,7 @@ from src.core.abstract_reference import abstract_reference
 from src.core.abstract_logic import abstract_logic
 from src.core.abstract_report import abstract_report
 from src.core.transaction_type import transaction_type
+from src.core.evet_type import event_type
 from datetime import datetime
 
 """
@@ -90,3 +91,6 @@ class json_deserializer(abstract_logic):
     """
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
+
+    def handle_event(self, type: event_type, **kwargs):
+        super().handle_event(type, kwargs)

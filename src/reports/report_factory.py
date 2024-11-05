@@ -9,6 +9,7 @@ from src.reports.rtf_report import rtf_report
 from src.errors.validator import Validator
 from src.manager.settings_manager import settings_manager
 from src.models.settings import settings
+from src.core.evet_type import event_type
 
 class report_factory(abstract_logic):
     __reports: dict = {}
@@ -82,3 +83,6 @@ class report_factory(abstract_logic):
     
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
+
+    def handle_event(self, type: event_type, **kwargs):
+        super().handle_event(type, kwargs)

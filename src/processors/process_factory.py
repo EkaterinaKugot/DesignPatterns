@@ -5,6 +5,7 @@ from src.core.abstract_processor import abstract_processor
 from src.processors.turnover_process import turnover_process
 from src.processors.date_block_processor import date_block_processor
 from src.processors.calculation_process import calculation_process
+from src.core.evet_type import event_type
 
 class process_factory(abstract_logic):
     __settings_manager: settings_manager = None
@@ -31,3 +32,6 @@ class process_factory(abstract_logic):
     
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
+
+    def handle_event(self, type: event_type, **kwargs):
+        super().handle_event(type, kwargs)

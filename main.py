@@ -7,12 +7,13 @@ from src.manager.settings_manager import settings_manager
 from src.start_service import start_service
 from src.processors.process_factory import process_factory
 from src.errors.custom_exception import FileWriteException
+from src.dto.filter import filter
+from src.logics.filter_prototype import filter_prototype
+from src.core.evet_type import event_type
+from src.logics.observe_service import observe_service
 
 from flask import abort, request
 from datetime import datetime
-from src.dto.filter import filter
-from src.logics.filter_prototype import filter_prototype
-
 
 app = connexion.FlaskApp(__name__)
 manager = settings_manager()
@@ -270,10 +271,7 @@ def change_date_block():
         manager.current_settings.date_block = new_date_block
 
         # Сохраняем date_block в settings.json
-        set_data = manager.open_settings_json()
-        set_data["date_block"] = datetime.timestamp(new_date_block)
-        if not manager.change_settings_json(set_data):
-            abort(400)
+        observe_service.raise_event(event_type.CHANGE_DATE_BLOCK, date_block=new_date_block)
 
         # Рассчитываем обороты
         data = reposity.data[data_reposity.transaction_key()]

@@ -21,7 +21,6 @@ class turnover_process(abstract_processor):
 
         # Получаем оброты до date_block
         turnovers: dict = date_block_manager.read(path)
-        print(turnovers)
         
         # Рассчитываем обороты после date_block
         for transaction in transactions:

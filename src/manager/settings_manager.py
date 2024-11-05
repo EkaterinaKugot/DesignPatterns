@@ -2,6 +2,7 @@ import json
 from src.models.settings import settings
 from src.core.abstract_logic import abstract_logic
 from src.errors.validator import Validator
+from src.errors.custom_exception import FileWriteException
 from src.core.abstract_report import abstract_report
 from src.core.format_reporting import format_reporting
 from src.reports.csv_report import csv_report
@@ -9,6 +10,9 @@ from src.reports.md_report import md_report
 from src.reports.json_report import json_report
 from src.reports.xml_report import xml_report
 from src.reports.rtf_report import rtf_report
+from src.core.evet_type import event_type
+from src.logics.observe_service import observe_service
+from datetime import datetime
 
 """
 Менеджер настроек
@@ -24,14 +28,13 @@ class settings_manager(abstract_logic):
         "RTF": rtf_report
     }
 
-    @property
-    def format_to_class(self) -> dict:
-        return self.__format_to_class
-
     def __new__(cls):
         if not hasattr(cls, "instance"):
             cls.instance = super(settings_manager, cls).__new__(cls)
         return cls.instance
+    
+    def __init__(self) -> None:
+        observe_service.append(self)
     
     def convert(self) -> bool:
         data = self.open_settings_json()
@@ -83,7 +86,10 @@ class settings_manager(abstract_logic):
     def current_settings(self) -> settings:
         return self.__settings
     
-
+    @property
+    def format_to_class(self) -> dict:
+        return self.__format_to_class
+    
     """
     Набор настроек по умолчанию
     """
@@ -109,3 +115,14 @@ class settings_manager(abstract_logic):
     
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
+
+    def handle_event(self, type: event_type, **kwargs):
+        super().handle_event(type, **kwargs)
+
+        new_date_block = kwargs.get("date_block")
+        if type == event_type.CHANGE_DATE_BLOCK:
+            # Сохраняем date_block в settings.json
+            set_data = self.open_settings_json()
+            set_data["date_block"] = datetime.timestamp(new_date_block)
+            if not self.change_settings_json(set_data):
+                FileWriteException("set_data", self.__file_name)

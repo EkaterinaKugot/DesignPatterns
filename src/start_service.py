@@ -10,6 +10,7 @@ from src.manager.recipe_manager import recipe_manager
 from src.models.storage import storage_model
 from src.models.transaction import transaction_model
 from src.core.transaction_type import transaction_type
+from src.core.evet_type import event_type
 import os
 from datetime import datetime
 import random
@@ -147,3 +148,6 @@ class start_service(abstract_logic):
     """
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
+
+    def handle_event(self, type: event_type, **kwargs):
+        super().handle_event(type, kwargs)
