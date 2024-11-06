@@ -6,11 +6,11 @@ from src.data_reposity import data_reposity
 from src.manager.settings_manager import settings_manager
 from src.start_service import start_service
 from src.processors.process_factory import process_factory
-from src.errors.custom_exception import FileWriteException
 from src.dto.filter import filter
 from src.logics.filter_prototype import filter_prototype
 from src.core.evet_type import event_type
 from src.logics.observe_service import observe_service
+from src.logics.nomenclature_service import nomenclature_service
 
 from flask import abort, request
 from datetime import datetime
@@ -136,6 +136,45 @@ def report_turnover(format: str):
     report.create(turnovers)
 
     return report.result
+
+"""
+Api для получения номенклатуры по id
+"""
+@app.route("/api/nomenclature/<id>", methods=["GET"])
+def get_nomenclature(id: str):
+    data = reposity.data[data_reposity.nomenclature_key()]
+
+    if not data:
+        abort(404)
+
+    nom_data = nomenclature_service.get_nomenclature(data, id)
+
+    if not nom_data:
+        return {}
+
+    report = report_factory(manager).create_default()
+    report.create(nom_data)
+
+    return report.result
+
+"""
+Api для добавления номенклатуры
+"""
+@app.route("/api/nomenclature", methods=["PUT"])
+def put_nomenclature():
+    new_nomenclature = request.json
+    data = reposity.data[data_reposity.nomenclature_key()]
+
+    if not new_nomenclature:
+        abort(400)
+
+    nomenclature_exists, nomenclature = nomenclature_service.put_nomenclature(new_nomenclature, data)
+    if not nomenclature_exists: 
+        return "Such a nomenclature already exists"
+    else:
+        reposity.data[data_reposity.nomenclature_key()].append(nomenclature)
+        print(reposity.data[data_reposity.nomenclature_key()][-1].full_name)
+        return "Nomenclature successfully added"
 
 """
 Api для получения даты блокировки

@@ -46,7 +46,7 @@ class filter_prototype(abstract_prototype):
 
         return result
     
-    def __filter_period(self, filterDto_period: list):
+    def __filter_period(self, filterDto_period: list) -> list:
         if filterDto_period is None or len(filterDto_period) != 2:
             return self.data
         
@@ -59,20 +59,20 @@ class filter_prototype(abstract_prototype):
     """
     Фильтрация по имени и id текущей модели
     """
-    def __filter_model(self, filterDto_arg: str, filterDto_type: filter_type, name_attr: str):
+    def __filter_model(self, filterDto_arg: str, filterDto_type: filter_type, name_attr: str) -> list:
         result = []
         filt = filter_service(filterDto_type)
         for item in self.data:
             item_names = self.__defining_list_data_compare(item, name_attr)
             for item_name in item_names:
-                if filt.filtration(filterDto_arg, str(item_name)):
+                if filt.filtration(str(filterDto_arg), str(item_name)):
                     result.append(item)
         return result
     
     """
     Фильтрация по имени и id внутренней модели
     """
-    def __filter_internal_model(self, filterDto_arg: str, filterDto_type: filter_type, name_attr: str, filterDto_model: str):
+    def __filter_internal_model(self, filterDto_arg: str, filterDto_type: filter_type, name_attr: str, filterDto_model: str) -> list:
         result = []
         # Проверяем, что модель, по которой нужно отфильтровать, есть
         if len(self.data) == 0:
@@ -92,7 +92,7 @@ class filter_prototype(abstract_prototype):
             if isinstance(internal_model, type_internal_model):
                 item_names = self.__defining_list_data_compare(internal_model, name_attr)
                 for item_name in item_names:
-                    if filt.filtration(filterDto_arg, str(item_name)):
+                    if filt.filtration(str(filterDto_arg), str(item_name)):
                         result.append(item)
 
         return result

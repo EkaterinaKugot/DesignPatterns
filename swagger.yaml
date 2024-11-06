@@ -11,9 +11,23 @@ produces:
 
 basePath: "/api"
 
+tags:
+  - name: Reports
+    description: Набор методов для работы с отчетностью
+  - name: Dictionary
+    description: Справочники
+  - name: Filtration
+    description: Фильтрация данных
+  - name: Date block
+    description: Работа с датой блокировки
+  - name: Nomenclature
+    description: Работа с номенклатурами
+
 paths:
   /report/formats:
     get:
+      tags:
+        - Dictionary
       summary: Получить список форматов для отчетов
       operationId: main.formats
       produces:
@@ -30,6 +44,8 @@ paths:
 
   /report/models:
     get:
+      tags:
+        - Dictionary
       summary: Получить список моделей
       operationId: main.models
       produces:
@@ -46,6 +62,8 @@ paths:
 
   /type_filter:
     get:
+      tags:
+        - Dictionary
       summary: Получить список типов фильтрации
       operationId: main.get_type_filter
       produces:
@@ -62,6 +80,8 @@ paths:
 
   /report/range/{format}:
     get:
+      tags:
+        - Reports
       summary: Получить отчет по единицам измерения
       operationId: main.report_range
       produces:
@@ -84,6 +104,8 @@ paths:
     
   /report/group/{format}:
     get:
+      tags:
+        - Reports
       summary: Получить отчет по группам номенклатур
       operationId: main.report_group
       produces:
@@ -106,6 +128,8 @@ paths:
 
   /report/nomenclature/{format}:
     get:
+      tags:
+          - Reports
       summary: Получить отчет по номенклатурам
       operationId: main.report_nomenclature
       produces:
@@ -128,6 +152,8 @@ paths:
 
   /report/recipe/{format}:
     get:
+      tags:
+        - Reports
       summary: Получить отчет по рецептам
       operationId: main.report_recipe
       produces:
@@ -150,6 +176,8 @@ paths:
 
   /report/storage/{format}:
     get:
+      tags:
+        - Reports
       summary: Получить отчет по рецептам
       operationId: main.report_storage
       produces:
@@ -172,6 +200,8 @@ paths:
 
   /report/transaction/{format}:
     get:
+      tags:
+        - Reports
       summary: Получить отчет по транзакциям
       operationId: main.report_transaction
       produces:
@@ -191,25 +221,11 @@ paths:
       description: Уникальный код формата
       required: true
       type: string
-
-  /get_date_block:
-    get:
-      summary: Получить дату блокировки
-      operationId: main.get_date_block
-      produces:
-        - application/text
-      responses:
-        200:
-          description: OK
-          schema:
-            type: object
-        500:
-          description: Ошибка на сервере
-        default:
-          description: Неизвестная ошибка
   
   /report/turnover/{format}:
     get:
+      tags:
+        - Reports
       summary: Получить отчет по оборотам
       operationId: main.report_turnover
       produces:
@@ -230,8 +246,86 @@ paths:
       required: true
       type: string
 
+  /api/nomenclature/{id}:
+    get:
+      tags:
+        - Nomenclature
+      summary: Получить номенлатуру по id
+      operationId: main.get_nomenclature
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+    parameters:
+    - name: id
+      in: path
+      description: Уникальный код номенклатуры
+      required: true
+      type: string
+
+  /api/nomenclature:
+    put:
+      tags:
+        - Nomenclature
+      summary: Обновить номенклатуру по ID
+      operationId: main.put_nomenclature
+      produces:
+        - application/text
+      parameters:
+        - in: body
+          name: nomenclature
+          description: Номенклатура
+          required: true
+          schema:
+            type: object
+            additionalProperties: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        400:
+          description: Неверные данные для добавления
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+  
+  /get_date_block:
+    get:
+      tags:
+        - Date block
+      summary: Получить дату блокировки
+      operationId: main.get_date_block
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        404:
+          description: Данных по модели нет.
+          schema:
+            type: object
+        default:
+          description: Неизвестная ошибка
+
   /filter/{model}:
     post:
+      tags:
+        - Filtration
       summary: Фильтрация данных по модели
       operationId: main.filter_data
       consumes:
@@ -283,6 +377,8 @@ paths:
 
   /transaction/filter:
     post:
+      tags:
+        - Filtration
       summary: Фильтрация транзакций по складу или номенклатуре
       operationId: main.filter_transaction
       consumes:
@@ -347,6 +443,8 @@ paths:
 
   /turnover/filter:
     post:
+      tags:
+        - Filtration
       summary: Фильтрация складских оборотов по складу, номенклатуре или периоду
       operationId: main.filter_turnover
       consumes:
@@ -422,6 +520,8 @@ paths:
 
   /post_date_block:
     post:
+      tags:
+        - Date block
       summary: Изменение даты блокировки
       operationId: main.change_date_block
       consumes:
