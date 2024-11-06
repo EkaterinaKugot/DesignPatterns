@@ -30,8 +30,9 @@ class nomenclature_service(abstract_logic):
         return prototype.data
     
     @staticmethod
-    def put_nomenclature(new_nomenclature: dict, data: list) -> bool:
+    def put_nomenclature(new_nomenclature: dict, data: list) -> list[bool, nomenclature_model]:
         Validator.validate_type("new_nomenclature", new_nomenclature, dict)
+        Validator.validate_type("data", data, list)
 
         deserializer = json_deserializer(nomenclature_model)
         if not deserializer.open("", [new_nomenclature]):
@@ -54,9 +55,44 @@ class nomenclature_service(abstract_logic):
             return True, nomenclature
         
         return False, nomenclature
+    
+    @staticmethod
+    def delete_nomenclature(nomenclature: dict, data: list) -> bool:
+        Validator.validate_type("nomenclature", nomenclature, dict)
+        Validator.validate_type("data", data, list)
+
+        deserializer = json_deserializer(nomenclature_model)
+        if not deserializer.open("", [nomenclature]):
+            return abort(400)
+        
+        Validator.validate_empty_argument("model_objects", deserializer.model_objects)
+        Validator.validate_type("model_objects[0]", deserializer.model_objects[0], nomenclature_model)
+        nomenclature: nomenclature_model = deserializer.model_objects[0]
+
+        nom_filter = filter.create({"id": nomenclature.id})
+
+        prototype = filter_prototype(data)
+        prototype.create(nom_filter)
+
+        # Если номенлатура есть, то блокируем удаление
+        if prototype.data:
+            return True
+        
+        return False
 
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
 
     def handle_event(self, type: event_type, **kwargs):
         super().handle_event(type, **kwargs)
+
+        if type == event_type.DELETE_NOMENCLATURE:
+            data = kwargs.get("data")
+            Validator.validate_not_none("data", data)
+
+            nomenclature = kwargs.get("nomenclature")
+            Validator.validate_not_none("nomenclature", nomenclature)
+
+            self.delete_nomenclature(nomenclature, data)
+        elif type == event_type.CHANGE_NOMENCLATURE:
+            pass

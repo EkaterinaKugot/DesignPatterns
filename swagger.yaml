@@ -270,11 +270,11 @@ paths:
       required: true
       type: string
 
-  /api/nomenclature:
+  /api/put_nomenclature:
     put:
       tags:
         - Nomenclature
-      summary: Обновить номенклатуру по ID
+      summary: Добавить номенклатуру
       operationId: main.put_nomenclature
       produces:
         - application/text
@@ -293,6 +293,36 @@ paths:
             type: object
         400:
           description: Неверные данные для добавления
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+
+  /api/delete_nomenclature:
+    delete:
+      tags:
+        - Nomenclature
+      summary: Удалить номенклатуру
+      operationId: main.delete_nomenclature
+      produces:
+        - application/text
+      parameters:
+        - in: body
+          name: nomenclature
+          description: Номенклатура
+          required: true
+          schema:
+            type: object
+            additionalProperties: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        400:
+          description: Неверные данные для удаления
           schema:
             type: object
         500:
