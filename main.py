@@ -24,7 +24,7 @@ start.create()
 
 factory = process_factory(manager)
 
-nom_service = nomenclature_service()
+nom_service = nomenclature_service(manager)
 
 # http://127.0.0.1:8080/api/ui/
 
@@ -165,16 +165,14 @@ Api для добавления номенклатуры
 @app.route("/api/put_nomenclature", methods=["PUT"])
 def put_nomenclature():
     new_nomenclature = request.json
-    data = reposity.data[data_reposity.nomenclature_key()]
 
     if not new_nomenclature:
         abort(400)
 
-    nomenclature_exists, nomenclature = nom_service.put_nomenclature(new_nomenclature, data)
-    if not nomenclature_exists: 
+    nomenclature_exists = nom_service.put_nomenclature(new_nomenclature, reposity.data)
+    if nomenclature_exists: 
         return "Such a nomenclature already exists"
     else:
-        reposity.data[data_reposity.nomenclature_key()].append(nomenclature)
         return "Nomenclature successfully added"
     
 """
@@ -190,6 +188,19 @@ def delete_nomenclature():
 
     observe_service.raise_event(event_type.DELETE_NOMENCLATURE, nomenclature=del_nomenclature, data=data)
     return "Nomenclature removed"
+
+"""
+Api для добавления номенклатуры
+"""
+@app.route("/api/change_nomenclature", methods=["PATCH"])
+def change_nomenclature():
+    change_nomenclature = request.json
+
+    if not change_nomenclature:
+        abort(400)
+
+    observe_service.raise_event(event_type.CHANGE_NOMENCLATURE, nomenclature=change_nomenclature, data=reposity.data)
+    return "Nomenclature changed"
 
 """
 Api для получения даты блокировки

@@ -330,6 +330,36 @@ paths:
         default:
           description: Неизвестная ошибка
   
+  /api/change_nomenclature:
+    patch:
+      tags:
+        - Nomenclature
+      summary: Изменить номенклатуру
+      operationId: main.change_nomenclature
+      produces:
+        - application/text
+      parameters:
+        - in: body
+          name: nomenclature
+          description: Номенклатура
+          required: true
+          schema:
+            type: object
+            additionalProperties: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        400:
+          description: Неверные данные для изменения
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+  
   /get_date_block:
     get:
       tags:

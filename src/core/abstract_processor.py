@@ -1,14 +1,13 @@
 from abc import ABC, abstractmethod
 from src.errors.validator import Validator
 from src.models.transaction import transaction_model
-from src.models.turnover import turnover_model
 from src.manager.settings_manager import settings_manager
 
 
 """
 Абстрактный класс для процессов транзакции
 """
-class abstract_processor:
+class abstract_processor(ABC):
     __file_name: str = "turnover_until_date_block.json"
     __settings_manager: settings_manager = None
 
