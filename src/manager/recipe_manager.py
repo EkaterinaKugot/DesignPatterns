@@ -7,6 +7,7 @@ from src.models.range import range_model
 from src.errors.validator import Validator
 from src.errors.custom_exception import ArgumentException
 from src.core.abstract_report import abstract_report
+from src.core.evet_type import event_type
 import os
 import re
 
@@ -193,3 +194,6 @@ class recipe_manager(abstract_logic):
 
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
+
+    def handle_event(self, type: event_type, **kwargs):
+        super().handle_event(type, **kwargs)

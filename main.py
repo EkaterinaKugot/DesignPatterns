@@ -6,13 +6,16 @@ from src.data_reposity import data_reposity
 from src.manager.settings_manager import settings_manager
 from src.start_service import start_service
 from src.processors.process_factory import process_factory
-from src.errors.custom_exception import FileWriteException
+from src.dto.filter import filter
+from src.logics.filter_prototype import filter_prototype
+from src.core.evet_type import event_type
+from src.logics.observe_service import observe_service
+from src.logics.nomenclature_service import nomenclature_service
+from src.logics.recipe_service import recipe_service
+from src.logics.turnover_service import turnover_service
 
 from flask import abort, request
 from datetime import datetime
-from src.dto.filter import filter
-from src.logics.filter_prototype import filter_prototype
-
 
 app = connexion.FlaskApp(__name__)
 manager = settings_manager()
@@ -22,6 +25,10 @@ start = start_service(reposity, manager)
 start.create()
 
 factory = process_factory(manager)
+
+nom_service = nomenclature_service(manager)
+rec_service = recipe_service(manager)
+tur_service = turnover_service(manager)
 
 # http://127.0.0.1:8080/api/ui/
 
@@ -135,6 +142,69 @@ def report_turnover(format: str):
     report.create(turnovers)
 
     return report.result
+
+"""
+Api для получения номенклатуры по id
+"""
+@app.route("/api/nomenclature/<id>", methods=["GET"])
+def get_nomenclature(id: str):
+    data = reposity.data[data_reposity.nomenclature_key()]
+
+    if not data:
+        abort(404)
+
+    nom_data = nom_service.get_nomenclature(data, id)
+
+    if not nom_data:
+        return {}
+
+    report = report_factory(manager).create_default()
+    report.create(nom_data)
+
+    return report.result
+
+"""
+Api для добавления номенклатуры
+"""
+@app.route("/api/put_nomenclature", methods=["PUT"])
+def put_nomenclature():
+    new_nomenclature = request.json
+
+    if not new_nomenclature:
+        abort(400)
+
+    nomenclature_exists = nom_service.put_nomenclature(new_nomenclature, reposity.data)
+    if nomenclature_exists: 
+        return "Such a nomenclature already exists"
+    else:
+        return "Nomenclature successfully added"
+    
+"""
+Api для добавления номенклатуры
+"""
+@app.route("/api/delete_nomenclature", methods=["DELETE"])
+def delete_nomenclature():
+    del_nomenclature = request.json
+    data = reposity.data[data_reposity.nomenclature_key()]
+
+    if not del_nomenclature:
+        abort(400)
+
+    observe_service.raise_event(event_type.DELETE_NOMENCLATURE, nomenclature=del_nomenclature, data=data)
+    return "Nomenclature removed"
+
+"""
+Api для добавления номенклатуры
+"""
+@app.route("/api/change_nomenclature", methods=["PATCH"])
+def change_nomenclature():
+    change_nomenclature = request.json
+
+    if not change_nomenclature:
+        abort(400)
+
+    observe_service.raise_event(event_type.CHANGE_NOMENCLATURE, nomenclature=change_nomenclature, data=reposity.data)
+    return "Nomenclature changed"
 
 """
 Api для получения даты блокировки
@@ -258,9 +328,6 @@ def change_date_block():
     request_data = request.get_json()
     new_date_block = request_data.get("date_block")
 
-    if new_date_block is None:
-        abort(500)
-
     try:
         new_date_block = datetime.strptime(new_date_block, "%Y-%m-%dT%H:%M:%SZ")
     except:
@@ -269,23 +336,12 @@ def change_date_block():
     if new_date_block != manager.current_settings.date_block:
         manager.current_settings.date_block = new_date_block
 
-        # Сохраняем date_block в settings.json
-        set_data = manager.open_settings_json()
-        set_data["date_block"] = datetime.timestamp(new_date_block)
-        if not manager.change_settings_json(set_data):
-            abort(400)
-
         # Рассчитываем обороты
         data = reposity.data[data_reposity.transaction_key()]
         if not data:
             abort(404)
 
-        process_turnover = factory.create("date_block")
-        if process_turnover.processor(data):
-            return "Ok"
-        else:
-            abort(400)
-            FileWriteException("turnovers", process_turnover.file_name)
+        observe_service.raise_event(event_type.CHANGE_DATE_BLOCK, date_block=new_date_block, data=data)
 
     return "Ok"
 

@@ -40,7 +40,6 @@ class filter:
     
     @id.setter
     def id(self, id: str):
-        Validator.validate_type("id", id, str)
         self.__id = id
 
     @property

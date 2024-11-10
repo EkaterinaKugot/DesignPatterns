@@ -35,7 +35,4 @@ class date_block_processor(abstract_processor):
 
         path = os.path.join(self.settings_manager.current_settings.json_folder, self.file_name)
 
-        if date_block_manager.write(path, turnovers, self.settings_manager):
-            return True
-        else:
-            return False
+        return date_block_manager.write(path, turnovers, self.settings_manager)

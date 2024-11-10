@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from src.errors.validator import Validator
+from src.core.evet_type import event_type
 import glob
 
 """
@@ -29,6 +30,14 @@ class abstract_logic(ABC):
     @abstractmethod
     def set_exception(self, ex: Exception):
         pass
+
+    """
+    Абстрактный метод для обработки события
+    """
+    @abstractmethod
+    def handle_event(self, type: event_type, **kwargs):
+        Validator.validate_type("type", type, event_type)
+
 
     @staticmethod
     def file_search(file_name: str) -> str:

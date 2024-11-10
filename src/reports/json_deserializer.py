@@ -5,6 +5,7 @@ from src.core.abstract_reference import abstract_reference
 from src.core.abstract_logic import abstract_logic
 from src.core.abstract_report import abstract_report
 from src.core.transaction_type import transaction_type
+from src.core.evet_type import event_type
 from datetime import datetime
 
 """
@@ -19,11 +20,11 @@ class json_deserializer(abstract_logic):
     """
     Десериализации данных из JSON
     """
-    def open(self, file_name: str):
+    def open(self, file_name: str, data_list: list = None):
         Validator.validate_type("file_name", file_name, str)
 
         try:
-            return self.__deserialize_data(file_name)
+            return self.__deserialize_data(file_name, data_list)
         except Exception as ex:
             self.set_exception(ex)
             return False
@@ -31,11 +32,11 @@ class json_deserializer(abstract_logic):
     """
     Десериализации данных
     """
-    def __deserialize_data(self, file_name: str):
-        full_path = self.file_search(file_name)
-
-        with open(full_path, encoding='utf-8') as stream:
-            data_list = json.load(stream)
+    def __deserialize_data(self, file_name: str, data_list: list = None):
+        if data_list is None:
+            full_path = self.file_search(file_name)
+            with open(full_path, encoding='utf-8') as stream:
+                data_list = json.load(stream)
 
         Validator.validate_type("data_list", data_list, list)
 
@@ -90,3 +91,6 @@ class json_deserializer(abstract_logic):
     """
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
+
+    def handle_event(self, type: event_type, **kwargs):
+        super().handle_event(type, **kwargs)
