@@ -7,6 +7,8 @@ from src.core.evet_type import event_type
 from src.logics.observe_service import observe_service
 from src.manager.date_block_manager import date_block_manager
 from src.logics.nomenclature_service import nomenclature_service
+from src.logics.recipe_service import recipe_service
+from src.logics.turnover_service import turnover_service
 
 from datetime import datetime, timedelta
 import os
@@ -24,6 +26,8 @@ class test_observe_service(unittest.TestCase):
     set_manager.current_settings.json_folder = "./tests/reports"
 
     nom_service = nomenclature_service(set_manager)
+    rec_service = recipe_service(set_manager)
+    tur_service = turnover_service(set_manager)
 
     """
     Проверка смены даты блокировки

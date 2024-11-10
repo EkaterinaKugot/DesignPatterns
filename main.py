@@ -11,6 +11,8 @@ from src.logics.filter_prototype import filter_prototype
 from src.core.evet_type import event_type
 from src.logics.observe_service import observe_service
 from src.logics.nomenclature_service import nomenclature_service
+from src.logics.recipe_service import recipe_service
+from src.logics.turnover_service import turnover_service
 
 from flask import abort, request
 from datetime import datetime
@@ -25,6 +27,8 @@ start.create()
 factory = process_factory(manager)
 
 nom_service = nomenclature_service(manager)
+rec_service = recipe_service(manager)
+tur_service = turnover_service(manager)
 
 # http://127.0.0.1:8080/api/ui/
 

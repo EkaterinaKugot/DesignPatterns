@@ -8,8 +8,6 @@ from src.reports.json_deserializer import json_deserializer
 from src.models.nomenclature import nomenclature_model
 from src.data_reposity import data_reposity
 from src.manager.settings_manager import settings_manager
-from src.processors.turnover_process import turnover_process
-from src.manager.date_block_manager import date_block_manager
 from flask import abort
 import os
 
@@ -91,7 +89,7 @@ class nomenclature_service(abstract_logic):
         
         return abort(400)
     
-    def change_nomenclature(self, nomenclature: dict, data: dict) -> bool:
+    def change_nomenclature(self, nomenclature: dict, data: dict) -> None:
         Validator.validate_type("nomenclature", nomenclature, dict)
         Validator.validate_type("data", data, dict)
 
@@ -116,27 +114,6 @@ class nomenclature_service(abstract_logic):
             if nom.id == nomenclature.id:
                 data[data_reposity.nomenclature_key()][i] = nomenclature
                 break
-
-        # Изменяем в рецептах
-        for i, recipe in enumerate( data[ data_reposity.recipe_key() ] ):
-            for j, nom in enumerate(recipe.nomenclatures):
-                if nom[0].id == nomenclature.id:
-                    data[data_reposity.recipe_key()][i].nomenclatures[j][0] = nomenclature
-                    break
-
-        # Изменяем в оборотах
-        path = os.path.join(
-            self.__settings_manager.current_settings.json_folder,
-            turnover_process(self.__settings_manager).file_name
-        )
-        turnovers = date_block_manager.read(path)
-
-        for key in turnovers.keys():
-            if nomenclature.id in key:
-                turnovers[key].nomenclature = nomenclature
-                break
-
-        date_block_manager.write(path, turnovers, self.__settings_manager)
         
 
     def set_exception(self, ex: Exception):
@@ -152,7 +129,7 @@ class nomenclature_service(abstract_logic):
             nomenclature = kwargs.get("nomenclature")
             Validator.validate_not_none("nomenclature", nomenclature)
 
-            return self.delete_nomenclature(nomenclature, data)
+            self.delete_nomenclature(nomenclature, data)
         elif type == event_type.CHANGE_NOMENCLATURE:
             data = kwargs.get("data")
             Validator.validate_not_none("data", data)
@@ -160,4 +137,4 @@ class nomenclature_service(abstract_logic):
             nomenclature = kwargs.get("nomenclature")
             Validator.validate_not_none("nomenclature", nomenclature)
 
-            return self.change_nomenclature(nomenclature, data)
+            self.change_nomenclature(nomenclature, data)
