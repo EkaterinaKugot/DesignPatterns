@@ -113,6 +113,8 @@ class settings_manager(abstract_logic):
 
         return report_class()
     
+    
+    
     def set_exception(self, ex: Exception):
         self._inner_set_exception(ex)
 
@@ -122,9 +124,21 @@ class settings_manager(abstract_logic):
         if type == event_type.CHANGE_DATE_BLOCK:
             new_date_block = kwargs.get("date_block")
             Validator.validate_not_none("new_date_block", new_date_block)
+
+            self.current_settings.date_block = new_date_block
+
             # Сохраняем date_block в settings.json
             set_data = self.open_settings_json()
             set_data["date_block"] = datetime.timestamp(new_date_block)
 
             if not self.change_settings_json(set_data):
                 FileWriteException("set_data", self.__file_name)
+        # elif type == event_type.SAVE_DATA_REPOSITY:
+        #     # self.current_settings.first_start = False
+
+        #     # # Изменяем first_start в settings.json
+        #     # set_data = self.open_settings_json()
+        #     # set_data["first_start"] = self.current_settings.first_start
+
+        #     # if not self.change_settings_json(set_data):
+        #     #     FileWriteException("set_data", self.__file_name)

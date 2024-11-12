@@ -22,6 +22,8 @@ tags:
     description: Работа с датой блокировки
   - name: Nomenclature
     description: Работа с номенклатурами
+  - name: Data Reposity
+    description: Работа с данными
 
 paths:
   /report/formats:
@@ -614,6 +616,42 @@ paths:
             type: object
         500:
           description: Неверный формат даты блокировки
+        default:
+          description: Неизвестная ошибка
+
+  /data_reposity/save:
+    post:
+      tags:
+        - Data Reposity
+      summary: Сохранения текущих данных
+      operationId: main.save_data_reposity
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+
+  /data_reposity/restore:
+    post:
+      tags:
+        - Data Reposity
+      summary: Восстановления данных
+      operationId: main.restore_data_reposity
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
         default:
           description: Неизвестная ошибка
 

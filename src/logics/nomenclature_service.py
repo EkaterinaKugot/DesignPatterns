@@ -60,7 +60,6 @@ class nomenclature_service(abstract_logic):
         # Если нет такой номенлатуры, то добавляем
         if not prototype.data:
             data[data_reposity.nomenclature_key()].append(nomenclature)
-            print(nomenclature.full_name)
             return False
         
         return True

@@ -334,7 +334,6 @@ def change_date_block():
         abort(500)
 
     if new_date_block != manager.current_settings.date_block:
-        manager.current_settings.date_block = new_date_block
 
         # Рассчитываем обороты
         data = reposity.data[data_reposity.transaction_key()]
@@ -344,6 +343,28 @@ def change_date_block():
         observe_service.raise_event(event_type.CHANGE_DATE_BLOCK, date_block=new_date_block, data=data)
 
     return "Ok"
+
+"""
+Api для сохранения текущих данных
+"""
+@app.route("/api/data_reposity/save", methods=["POST"])
+def save_data_reposity():
+        # try:
+        observe_service.raise_event(event_type.SAVE_DATA_REPOSITY)
+        return "Ok"
+        # except:
+        #     abort(500)
+
+"""
+Api для восстановления данных
+"""
+@app.route("/api/data_reposity/restore", methods=["POST"])
+def restore_data_reposity():
+        try:
+            observe_service.raise_event(event_type.RESTORE_DATA_REPOSITY)
+            return "Ok"
+        except:
+            abort(500)
 
 if __name__ == "__main__":
     app.add_api("swagger.yaml")
