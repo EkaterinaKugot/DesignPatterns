@@ -650,6 +650,10 @@ paths:
           description: OK
           schema:
             type: object
+        400:
+          description: Файл для восстановления не найден
+          schema:
+            type: object
         500:
           description: Ошибка на сервере
         default:

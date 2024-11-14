@@ -13,13 +13,17 @@ from src.logics.observe_service import observe_service
 from src.logics.nomenclature_service import nomenclature_service
 from src.logics.recipe_service import recipe_service
 from src.logics.turnover_service import turnover_service
+from src.reposity_manager import reposity_manager
 
 from flask import abort, request
 from datetime import datetime
 
 app = connexion.FlaskApp(__name__)
+
 manager = settings_manager()
 manager.open("settings.json")
+rep_manager = reposity_manager(manager)
+
 reposity = data_reposity()
 start = start_service(reposity, manager)
 start.create()
@@ -349,11 +353,11 @@ Api для сохранения текущих данных
 """
 @app.route("/api/data_reposity/save", methods=["POST"])
 def save_data_reposity():
-        # try:
-        observe_service.raise_event(event_type.SAVE_DATA_REPOSITY)
-        return "Ok"
-        # except:
-        #     abort(500)
+        try:
+            observe_service.raise_event(event_type.SAVE_DATA_REPOSITY, data=reposity.data)
+            return "Data saved successfully"
+        except:
+            abort(500)
 
 """
 Api для восстановления данных
@@ -361,8 +365,8 @@ Api для восстановления данных
 @app.route("/api/data_reposity/restore", methods=["POST"])
 def restore_data_reposity():
         try:
-            observe_service.raise_event(event_type.RESTORE_DATA_REPOSITY)
-            return "Ok"
+            observe_service.raise_event(event_type.RESTORE_DATA_REPOSITY, data=reposity.data)
+            return "Data restored successfully"
         except:
             abort(500)
 

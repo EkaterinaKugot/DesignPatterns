@@ -133,12 +133,12 @@ class settings_manager(abstract_logic):
 
             if not self.change_settings_json(set_data):
                 FileWriteException("set_data", self.__file_name)
-        # elif type == event_type.SAVE_DATA_REPOSITY:
-        #     # self.current_settings.first_start = False
+        elif type == event_type.SAVE_DATA_REPOSITY:
+            self.current_settings.first_start = False
 
-        #     # # Изменяем first_start в settings.json
-        #     # set_data = self.open_settings_json()
-        #     # set_data["first_start"] = self.current_settings.first_start
+            # Изменяем first_start в settings.json
+            set_data = self.open_settings_json()
+            set_data["first_start"] = self.current_settings.first_start
 
-        #     # if not self.change_settings_json(set_data):
-        #     #     FileWriteException("set_data", self.__file_name)
+            if not self.change_settings_json(set_data):
+                FileWriteException("set_data", self.__file_name)

@@ -12,19 +12,14 @@ from src.models.transaction import transaction_model
 from src.core.transaction_type import transaction_type
 from src.core.evet_type import event_type
 from src.logics.observe_service import observe_service
-from src.reports.report_factory import report_factory
-from src.core.format_reporting import format_reporting
-from src.errors.custom_exception import FileWriteException
 import os
 from datetime import datetime
 import random
-import json
 
 class start_service(abstract_logic):
     __reposity: data_reposity = None
     __settings_manager: settings_manager = None
     __nomenclatures: list = []
-    __file_name: str = "data_reposity.json"
     
 
     def __init__(self, reposity: data_reposity, manager: settings_manager) -> None:
@@ -33,8 +28,6 @@ class start_service(abstract_logic):
         Validator.validate_type("manager", manager, settings_manager)
         self.__reposity = reposity
         self.__settings_manager = manager
-
-        observe_service.append(self)
 
     """
     Текущие настройки
@@ -149,40 +142,10 @@ class start_service(abstract_logic):
                 self.__create_storage()
                 self.__create_transaction()
             else:
-                self.__restore_data()
+                observe_service.raise_event(event_type.RESTORE_DATA_REPOSITY, data=self.__reposity.data)
             return True
         except:
             return False
-        
-    """
-    Восстановить данные
-    """
-    def __restore_data(self): 
-        pass
-
-    """
-    Сохранить данные
-    """
-    def __save_data(self): 
-        file_path = os.path.join(
-            self.__settings_manager.current_settings.json_folder, self.__file_name
-        )
-        if os.path.exists(file_path):
-            os.remove(file_path)
-
-        result = {}
-        report = report_factory(self.__settings_manager).create(format_reporting.JSON)
-        for key, data in self.__reposity.data.items():
-            report.create(data)
-            result[key] = json.loads(report.result)
-
-        try:
-            if len(result) != 0:
-                data = json.dumps(result, indent=4, ensure_ascii=False)
-                with open(file_path , 'w', encoding='utf-8') as f:
-                    f.write(data)
-        except:
-            FileWriteException("data_reposity", self.__file_name)
 
     """
     Перегрузка абстрактного метода
@@ -192,8 +155,3 @@ class start_service(abstract_logic):
 
     def handle_event(self, type: event_type, **kwargs):
         super().handle_event(type, **kwargs)
-
-        if type == event_type.SAVE_DATA_REPOSITY:
-            self.__save_data()
-        elif type == event_type.RESTORE_DATA_REPOSITY:
-            self.__restore_data()
