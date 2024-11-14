@@ -102,7 +102,10 @@ class start_service(abstract_logic):
     """
     def __create_storage(self): 
         list = []
-        list.append(storage_model.create("Красноказачья 7", "Склад 1"))
+        list.extend(
+            [storage_model.create("Красноказачья 7", "Склад 1"),
+            storage_model.create("пр-кт Жуковского 12", "Склад 2")]
+        )
         self.__reposity.data[data_reposity.storage_key()] = list
 
     """
