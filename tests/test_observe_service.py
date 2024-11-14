@@ -9,6 +9,7 @@ from src.manager.date_block_manager import date_block_manager
 from src.logics.nomenclature_service import nomenclature_service
 from src.logics.recipe_service import recipe_service
 from src.logics.turnover_service import turnover_service
+from src.logics.transaction_service import transaction_service
 
 from datetime import datetime, timedelta
 import os
@@ -28,6 +29,7 @@ class test_observe_service(unittest.TestCase):
     nom_service = nomenclature_service(set_manager)
     rec_service = recipe_service(set_manager)
     tur_service = turnover_service(set_manager)
+    tran_service = transaction_service(set_manager)
 
     """
     Проверка смены даты блокировки
@@ -148,7 +150,7 @@ class test_observe_service(unittest.TestCase):
         }
 
 
-        # Действие
+        # Действия
         observe_service.raise_event(event_type.CHANGE_NOMENCLATURE, nomenclature=nomenclature, data=self.reposity.data)
 
         path = os.path.join(
@@ -161,5 +163,6 @@ class test_observe_service(unittest.TestCase):
         assert self.reposity.data[data_reposity.nomenclature_key()][0].full_name == "Мука"
         assert self.reposity.data[data_reposity.recipe_key()][0].nomenclatures[0][0].full_name == "Мука"
         assert list(turnovers.values())[0].nomenclature.full_name == "Мука"
+        assert self.reposity.data[data_reposity.transaction_key()][0].nomenclature.full_name == "Мука"
 
         

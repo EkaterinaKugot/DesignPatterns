@@ -1,6 +1,7 @@
 from src.errors.validator import Validator
 from src.core.filter_type import filter_type
-from datetime import datetime, timedelta
+from src.processors.date_block_processor import date_block_processor
+from datetime import datetime
 
 
 """
@@ -87,10 +88,14 @@ class filter:
         if model is not None:
             filt.model = model
         
-        start_period = data.get('start_period')
+        start_period = data.get('start_period', date_block_processor.process_start_date)
         end_period = data.get('end_period')
         try:
             start_period = datetime.strptime(start_period, "%Y-%m-%dT%H:%M:%SZ")
+        except:
+            pass
+
+        try:
             end_period = datetime.strptime(end_period, "%Y-%m-%dT%H:%M:%SZ")
             filt.period = [start_period, end_period]
         except:

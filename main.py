@@ -14,6 +14,7 @@ from src.logics.nomenclature_service import nomenclature_service
 from src.logics.recipe_service import recipe_service
 from src.logics.turnover_service import turnover_service
 from src.reposity_manager import reposity_manager
+from src.logics.transaction_service import transaction_service
 
 from flask import abort, request
 from datetime import datetime
@@ -33,6 +34,7 @@ factory = process_factory(manager)
 nom_service = nomenclature_service(manager)
 rec_service = recipe_service(manager)
 tur_service = turnover_service(manager)
+tran_service = transaction_service(manager)
 
 # http://127.0.0.1:8080/api/ui/
 
@@ -138,12 +140,50 @@ Api для получения отчета по оборотам
 @app.route("/api/report/turnover/<format>", methods=["GET"])
 def report_turnover(format: str):
     process_turnover = factory.create("turnover")
-    turnovers = process_turnover.processor(reposity.data[ data_reposity.transaction_key()  ])
+    turnovers = process_turnover.processor(reposity.data[ data_reposity.transaction_key() ])
     
     format = format.upper()
     inner_format = format_reporting(format)
     report = report_factory(manager).create(inner_format)
     report.create(turnovers)
+
+    return report.result
+
+"""
+Api для получения отчета по оборотно-сальдовой ведомости
+"""
+@app.route("/api/report/tbs/<format>", methods=["GET"])
+def report_tbs(format: str):
+    data = reposity.data[data_reposity.transaction_key()]
+    if not data:
+        abort(404)
+
+    start_date = request.args.get('start_date')
+    try:
+        start_date = datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%SZ")
+    except: 
+        abort(500)
+
+    end_date = request.args.get('end_date')
+    storage_name = request.args.get('storage_name')
+
+    period_filter: filter = filter.create({"end_period": end_date})
+    storage_filter: filter = filter.create({"name": storage_name}, "storage")
+
+    prototype = filter_prototype(data)
+    prototype.create(period_filter)
+    prototype.create(storage_filter)
+
+    if not prototype.data:
+        abort(404)
+
+    process_tbs = factory.create("tbs")
+    tbs = process_tbs.processor(prototype.data, start_date)
+
+    format = format.upper()
+    inner_format = format_reporting(format)
+    report = report_factory(manager).create(inner_format)
+    report.create([tbs])
 
     return report.result
 
