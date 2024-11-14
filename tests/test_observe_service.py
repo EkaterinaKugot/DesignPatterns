@@ -10,6 +10,7 @@ from src.logics.nomenclature_service import nomenclature_service
 from src.logics.recipe_service import recipe_service
 from src.logics.turnover_service import turnover_service
 from src.logics.transaction_service import transaction_service
+from src.reposity_manager import reposity_manager
 
 from datetime import datetime, timedelta
 import os
@@ -20,6 +21,7 @@ import os
 class test_observe_service(unittest.TestCase):
 
     set_manager = settings_manager()
+    rep_manager = reposity_manager(set_manager)
     reposity = data_reposity()
     start = start_service(reposity, set_manager)
     start.create()
@@ -164,5 +166,65 @@ class test_observe_service(unittest.TestCase):
         assert self.reposity.data[data_reposity.recipe_key()][0].nomenclatures[0][0].full_name == "Мука"
         assert list(turnovers.values())[0].nomenclature.full_name == "Мука"
         assert self.reposity.data[data_reposity.transaction_key()][0].nomenclature.full_name == "Мука"
+
+    """
+    Проверка сохранения и восстановлени reposity.data без изменения
+    """
+    def test_save_restore_without_changing(self):
+        # Подготовка
+        len_nomenclatures = len(self.reposity.data[data_reposity.nomenclature_key()])
+        path = os.path.join(
+            self.set_manager.current_settings.json_folder,
+            self.rep_manager.file_name
+        )
+        # Действия 
+        observe_service.raise_event(event_type.SAVE_DATA_REPOSITY, data=self.reposity.data)
+
+        # Проверка
+        assert os.path.exists(path)
+
+        # Действия 
+        observe_service.raise_event(event_type.RESTORE_DATA_REPOSITY, data=self.reposity.data)
+
+        assert len_nomenclatures == len(self.reposity.data[data_reposity.nomenclature_key()])
+
+    """
+    Проверка сохранения и восстановлени reposity.data с добавлением номенклатуры
+    """
+    def test_save_restore_with_changing(self):
+        # Подготовка
+        len_nomenclatures = len(self.reposity.data[data_reposity.nomenclature_key()])
+        path = os.path.join(
+            self.set_manager.current_settings.json_folder,
+            self.rep_manager.file_name
+        )
+
+        nomenclature = {
+            "full_name": "Перец",
+            "group": {
+                "id": self.reposity.data[data_reposity.group_key()][1].id,
+                "name": "Сырье"
+            },
+            "name": "",
+            "range": {
+                "base_range": None,
+                "conversion_factor": 1,
+                "id": self.reposity.data[data_reposity.range_key()][0].id,
+                "name": "гр"
+            }
+        }
+        # Действия 
+        self.nom_service.put_nomenclature(nomenclature, self.reposity.data)
+        observe_service.raise_event(event_type.SAVE_DATA_REPOSITY, data=self.reposity.data)
+
+        # Проверка
+        assert os.path.exists(path)
+
+        # Действия 
+        observe_service.raise_event(event_type.RESTORE_DATA_REPOSITY, data=self.reposity.data)
+
+        assert len(self.reposity.data[data_reposity.nomenclature_key()]) - len_nomenclatures == 1
+
+
 
         
