@@ -1,5 +1,11 @@
 from src.core.abstract_logic import abstract_logic
 from src.core.evet_type import event_type
+from src.models.group import group_model
+from src.models.range import range_model
+from src.models.nomenclature import nomenclature_model
+from src.models.recipe import recipe_model
+from src.models.storage import storage_model
+from src.models.transaction import transaction_model
 
 """
 Репозиторий
@@ -83,3 +89,17 @@ class data_reposity(abstract_logic):
             result.append(key)
 
         return result
+    
+    """
+    Получить список всех ключей и моделей
+    """
+    @staticmethod
+    def keys_and_models() -> dict:
+        return {
+            data_reposity.group_key(): group_model,
+            data_reposity.nomenclature_key(): nomenclature_model,
+            data_reposity.range_key(): range_model,
+            data_reposity.recipe_key(): recipe_model,
+            data_reposity.storage_key(): storage_model,
+            data_reposity.transaction_key(): transaction_model,
+        }

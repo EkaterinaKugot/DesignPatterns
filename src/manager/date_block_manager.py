@@ -5,6 +5,7 @@ from src.reports.report_factory import report_factory
 from src.core.format_reporting import format_reporting
 from src.manager.settings_manager import settings_manager
 from src.core.evet_type import event_type
+from src.errors.validator import Validator
 import os
 
 """
@@ -14,6 +15,7 @@ class date_block_manager(abstract_logic):
     
     @staticmethod
     def read(file_path: str) -> dict:
+        Validator.validate_type("file_path", file_path, str)
         turnovers = {}
         if os.path.exists(file_path):
             file_name = os.path.basename(file_path)
@@ -25,6 +27,10 @@ class date_block_manager(abstract_logic):
 
     @staticmethod
     def write(file_path: str, turnovers: dict, manager: settings_manager = settings_manager()) -> bool:
+        Validator.validate_type("file_path", file_path, str)
+        Validator.validate_type("turnovers",  turnovers, dict)
+        Validator.validate_type("manager",  manager, settings_manager)
+
         result = []
         if len(turnovers.values()) == 0:
             try:

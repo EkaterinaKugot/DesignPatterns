@@ -8,6 +8,7 @@ from src.processors.calculation_process import calculation_process
 from src.core.evet_type import event_type
 from src.errors.custom_exception import FileWriteException
 from src.logics.observe_service import observe_service
+from src.processors.tbs_process import tbs_process
 
 class process_factory(abstract_logic):
     __settings_manager: settings_manager = None
@@ -21,6 +22,7 @@ class process_factory(abstract_logic):
         self.register_process('turnover', turnover_process)
         self.register_process('date_block', date_block_processor)
         self.register_process('calculation', calculation_process)
+        self.register_process('tbs', tbs_process)
         
         observe_service.append(self)
 

@@ -6,14 +6,15 @@ from datetime import datetime
 Настройки
 """
 class settings:
-    __organization_name = ""
-    __inn = ""
-    __account = ""
-    __сorrespondent_account = ""
-    __bik = ""
-    __type_property = ""
-    __report_format = format_reporting.JSON
-    __date_block = None
+    __organization_name: str = ""
+    __inn: str = ""
+    __account: str = ""
+    __сorrespondent_account: str = ""
+    __bik: str = ""
+    __type_property: str = ""
+    __report_format: format_reporting = format_reporting.JSON
+    __date_block: datetime = None
+    __first_start: bool = True
     __json_folder: str = "./json"
 
     """
@@ -107,3 +108,12 @@ class settings:
 
         Validator.validate_type("date_block", date_block, datetime)
         self.__date_block = date_block
+
+    @property
+    def first_start(self) -> bool:
+        return self.__first_start
+    
+    @first_start.setter
+    def first_start(self, first_start: bool):
+        Validator.validate_type("first_start", first_start, bool)
+        self.__first_start = first_start

@@ -11,6 +11,7 @@ from src.models.storage import storage_model
 from src.models.transaction import transaction_model
 from src.core.transaction_type import transaction_type
 from src.core.evet_type import event_type
+from src.logics.observe_service import observe_service
 import os
 from datetime import datetime
 import random
@@ -33,7 +34,7 @@ class start_service(abstract_logic):
     """
     @property 
     def settings(self) -> settings:
-        return self.__settings_manager.settings
+        return self.__settings_manager.current_settings
     
     """
     Номенклатуры
@@ -101,7 +102,10 @@ class start_service(abstract_logic):
     """
     def __create_storage(self): 
         list = []
-        list.append(storage_model.create("Красноказачья 7", "Склад 1"))
+        list.extend(
+            [storage_model.create("Красноказачья 7", "Склад 1"),
+            storage_model.create("пр-кт Жуковского 12", "Склад 2")]
+        )
         self.__reposity.data[data_reposity.storage_key()] = list
 
     """
@@ -127,18 +131,21 @@ class start_service(abstract_logic):
                 )
             )
         self.__reposity.data[data_reposity.transaction_key()] = list1
-    
+
     """
     Первый старт
     """
     def create(self):
         try:
-            self.__create_nomenclature_groups()
-            self.__create_range()
-            self.__create_nomenclature()
-            self.__create_receipts()
-            self.__create_storage()
-            self.__create_transaction()
+            if self.settings.first_start:
+                self.__create_nomenclature_groups()
+                self.__create_range()
+                self.__create_nomenclature()
+                self.__create_receipts()
+                self.__create_storage()
+                self.__create_transaction()
+            else:
+                observe_service.raise_event(event_type.RESTORE_DATA_REPOSITY, data=self.__reposity.data)
             return True
         except:
             return False

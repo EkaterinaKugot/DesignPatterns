@@ -5,6 +5,10 @@ from src.manager.settings_manager import settings_manager
 from src.models.transaction import transaction_model
 from src.core.transaction_type import transaction_type
 from src.processors.process_factory import process_factory
+from src.logics.filter_prototype import filter_prototype
+from src.dto.filter import filter
+from src.models.tbs import tbs_model
+from src.reports.json_report import json_report
 
 from datetime import datetime, timedelta
 import random
@@ -23,6 +27,15 @@ class test_process(unittest.TestCase):
     set_manager.current_settings.date_block = datetime(1900, 1, 1)
 
     factory = process_factory(set_manager)
+    __reports_path = "./tests/reports"
+
+    def __check_folder_exists(self) -> None:
+        if not (os.path.exists(self.__reports_path) and os.path.isdir(self.__reports_path)):
+            os.makedirs(self.__reports_path)
+    
+    def __save_file(self, file_name: str, result) -> None:
+        with open(os.path.join(self.__reports_path, file_name), 'w', encoding='utf-8') as f:
+            f.write(result)
 
     """
     Проверка расчета оборотов
@@ -139,10 +152,48 @@ class test_process(unittest.TestCase):
         for t1, t2 in zip(turnovers_val_with, turnovers_val_without):
             assert t1.turnover == t2.turnover
 
-    def creatу_more_transactions(self, c_tur: int = 1500):
+    """
+    Проверка расчета оборотно-сальдовой ведомости
+    """
+    def test_tbs_processor(self):
+        # Подготовка
+        storage = self.reposity.data[data_reposity.storage_key()][0].name
+        start_date = datetime.now() - timedelta(minutes=60)
+        end_date = datetime.now() + timedelta(minutes=60)
+
+        # Формируем транзакции
+        count_tr = 100
+        transactions = self.creatу_more_transactions(count_tr, 2)
+
+        # Фильтруем их
+        period_filter: filter = filter.create({"end_period": end_date})
+        storage_filter: filter = filter.create({"name": storage}, "storage")
+
+        prototype = filter_prototype(transactions)
+        prototype.create(period_filter)
+        prototype.create(storage_filter)
+
+        process_tbs = self.factory.create('tbs')
+
+        # Дествие
+        tbs = process_tbs.processor(transactions, start_date)
+
+        # Проверка
+        assert tbs is not None
+        assert isinstance(tbs, tbs_model)
+
+        # Вывод отчета в json файл
+        report_json = json_report()
+        report_json.create([tbs])
+
+        self.__check_folder_exists()
+        file_name = "tbs.json"
+        self.__save_file(file_name, report_json.result)
+
+    def creatу_more_transactions(self, c_tur: int = 1500, divider: float = 1.2):
         transactions = []
         nomenclatures = self.reposity.data[data_reposity.nomenclature_key()]
-        storage = self.reposity.data[data_reposity.storage_key()][0]
+        storage = random.choice(self.reposity.data[data_reposity.storage_key()])
 
         count_iter = c_tur  // len(nomenclatures)
         for i in range(count_iter):
@@ -150,7 +201,7 @@ class test_process(unittest.TestCase):
                 range1 = nomenclature.range
 
                 date = datetime.now() - timedelta( minutes=(count_iter-i) * len(nomenclatures) )
-                if i * len(nomenclatures) > c_tur // 1.2:
+                if i * len(nomenclatures) > c_tur // divider:
                     date = datetime.now() + timedelta( minutes=i * len(nomenclatures) )
                 
                 random_quantity = random.randint(10, 300)

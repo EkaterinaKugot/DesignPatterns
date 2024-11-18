@@ -22,6 +22,8 @@ tags:
     description: Работа с датой блокировки
   - name: Nomenclature
     description: Работа с номенклатурами
+  - name: Data Reposity
+    description: Работа с данными
 
 paths:
   /report/formats:
@@ -245,6 +247,54 @@ paths:
       description: Уникальный код формата
       required: true
       type: string
+
+  /report/tbs/{format}:
+    get:
+      tags:
+        - Reports
+      summary: Получить отчет по оборотно-сальдовой ведомости
+      operationId: main.report_tbs
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        404:
+          description: Данных для фильтрации по модели нет.
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+    parameters:
+      - name: format
+        in: path
+        description: Уникальный код формата
+        required: true
+        type: string
+      - name: start_date
+        in: query
+        description: Дата начала (формат YYYY-MM-DD)
+        required: true
+        type: string
+        format: date-time
+        default: "2024-11-14T14:00:00Z"
+      - name: end_date
+        in: query
+        description: Дата окончания (формат YYYY-MM-DD)
+        required: true
+        type: string
+        format: date-time
+        default: "2024-11-15T14:00:00Z"
+      - name: storage_name
+        in: query
+        description: Имя склада
+        required: false
+        type: string
+
 
   /api/nomenclature/{id}:
     get:
@@ -614,6 +664,46 @@ paths:
             type: object
         500:
           description: Неверный формат даты блокировки
+        default:
+          description: Неизвестная ошибка
+
+  /data_reposity/save:
+    post:
+      tags:
+        - Data Reposity
+      summary: Сохранения текущих данных
+      operationId: main.save_data_reposity
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
+        default:
+          description: Неизвестная ошибка
+
+  /data_reposity/restore:
+    post:
+      tags:
+        - Data Reposity
+      summary: Восстановления данных
+      operationId: main.restore_data_reposity
+      produces:
+        - application/text
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+        400:
+          description: Файл для восстановления не найден
+          schema:
+            type: object
+        500:
+          description: Ошибка на сервере
         default:
           description: Неизвестная ошибка
 
