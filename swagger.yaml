@@ -309,6 +309,10 @@ paths:
           description: OK
           schema:
             type: object
+        404:
+          description: Данных для фильтрации по модели нет.
+          schema:
+            type: object
         500:
           description: Ошибка на сервере
         default:
@@ -616,7 +620,7 @@ paths:
           schema:
             type: object
         400:
-          description: Данная модель не найдена. Возможна фильтрация по storage или nomenclature
+          description: Данная модель не найдена. Возможна фильтрация по storage, nomenclature или period
           schema:
             type: object
         404:

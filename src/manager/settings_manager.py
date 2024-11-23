@@ -12,6 +12,7 @@ from src.reports.xml_report import xml_report
 from src.reports.rtf_report import rtf_report
 from src.core.evet_type import event_type
 from src.logics.observe_service import observe_service
+from src.core.logging_type import logging_type
 from datetime import datetime
 
 """
@@ -100,7 +101,9 @@ class settings_manager(abstract_logic):
         _settings.account = "11127400937"
         _settings.сorrespondent_account = "86127390170"
         _settings.bik = "662817992"
-        _settings.type_property = "lalal"
+        _settings.type_property = "ИП"
+        _settings.date_block = datetime(2024, 1, 1)
+        _settings.min_log_level = logging_type.DEBUG
         return _settings
     
     def get_report_class(self, format: format_reporting = None) -> abstract_report:

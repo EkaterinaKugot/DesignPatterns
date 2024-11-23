@@ -11,3 +11,4 @@ class event_type(Enum):
     SAVE_DATA_REPOSITY = 5
     RESTORE_DATA_REPOSITY = 6
     CHANGE_DATE_BLOCK = 7
+    LOGGING = 8

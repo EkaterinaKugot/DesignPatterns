@@ -15,6 +15,8 @@ from src.logics.recipe_service import recipe_service
 from src.logics.turnover_service import turnover_service
 from src.reposity_manager import reposity_manager
 from src.logics.transaction_service import transaction_service
+from src.errors.logger import Logger
+from src.core.logging_type import logging_type
 
 from flask import abort, request
 from datetime import datetime
@@ -36,6 +38,8 @@ rec_service = recipe_service(manager)
 tur_service = turnover_service(manager)
 tran_service = transaction_service(manager)
 
+logger = Logger(manager)
+
 # http://127.0.0.1:8080/api/ui/
 
 """
@@ -43,6 +47,11 @@ Api для получения списка всех форматов для по
 """
 @app.route("/api/report/formats", methods=["GET"])
 def formats():
+    observe_service.raise_event(
+        event_type.LOGGING, 
+        log_type=logging_type.INFO, 
+        message="Getting a list of all formats for building reports"
+    )
     return [{"name":item.name, "value":item.value} for item in format_reporting]
 
 """
@@ -50,6 +59,11 @@ Api для получения списка всех форматов фильт�
 """
 @app.route("/api/type_filter", methods=["GET"])
 def get_type_filter():
+    observe_service.raise_event(
+        event_type.LOGGING, 
+        log_type=logging_type.INFO, 
+        message="Getting a list of all filtering formats"
+    )
     return [{"name":item.name, "value":item.value} for item in filter_type]
 
 """
@@ -57,6 +71,11 @@ Api для получения списка моделей
 """
 @app.route("/api/report/models", methods=['GET'])
 def models():
+    observe_service.raise_event(
+        event_type.LOGGING, 
+        log_type=logging_type.INFO, 
+        message="Getting a list of models"
+    )
     return data_reposity.keys()
 
 """
@@ -68,7 +87,11 @@ def report_range(format: str):
     inner_format = format_reporting(format)
     report = report_factory(manager).create(inner_format)
     report.create( reposity.data[ data_reposity.range_key()  ] )
-
+    observe_service.raise_event(
+        event_type.LOGGING, 
+        log_type=logging_type.INFO, 
+        message="Getting a report by range"
+    )
     return report.result
 
 
@@ -81,7 +104,11 @@ def report_group(format: str):
     inner_format = format_reporting(format)
     report = report_factory(manager).create(inner_format)
     report.create( reposity.data[ data_reposity.group_key()  ] )
-
+    observe_service.raise_event(
+        event_type.LOGGING, 
+        log_type=logging_type.INFO, 
+        message="Getting a report on nomenclature groups"
+    )
     return report.result
 
 
@@ -94,7 +121,11 @@ def report_nomenclature(format: str):
     inner_format = format_reporting(format)
     report = report_factory(manager).create(inner_format)
     report.create( reposity.data[ data_reposity.nomenclature_key()  ] )
-
+    observe_service.raise_event(
+        event_type.LOGGING, 
+        log_type=logging_type.INFO, 
+        message="Getting a report on nomenclatures"
+    )
     return report.result
 
 
@@ -107,7 +138,11 @@ def report_recipe(format: str):
     inner_format = format_reporting(format)
     report = report_factory(manager).create(inner_format)
     report.create( reposity.data[ data_reposity.recipe_key()  ] )
-
+    observe_service.raise_event(
+        event_type.LOGGING, 
+        log_type=logging_type.INFO, 
+        message="Getting a recipe report"
+    )
     return report.result
 
 """
@@ -119,7 +154,11 @@ def report_storage(format: str):
     inner_format = format_reporting(format)
     report = report_factory(manager).create(inner_format)
     report.create( reposity.data[ data_reposity.storage_key()  ] )
-
+    observe_service.raise_event(
+        event_type.LOGGING, 
+        log_type=logging_type.INFO, 
+        message="Getting a report on storage"
+    )
     return report.result
 
 """
@@ -131,7 +170,11 @@ def report_transaction(format: str):
     inner_format = format_reporting(format)
     report = report_factory(manager).create(inner_format)
     report.create( reposity.data[ data_reposity.transaction_key()  ] )
-
+    observe_service.raise_event(
+        event_type.LOGGING, 
+        log_type=logging_type.INFO, 
+        message="Getting a transaction report"
+    )
     return report.result
 
 """
@@ -146,7 +189,11 @@ def report_turnover(format: str):
     inner_format = format_reporting(format)
     report = report_factory(manager).create(inner_format)
     report.create(turnovers)
-
+    observe_service.raise_event(
+        event_type.LOGGING, 
+        log_type=logging_type.INFO, 
+        message="Getting a turnover report"
+    )
     return report.result
 
 """
@@ -154,239 +201,369 @@ Api для получения отчета по оборотно-сальдов�
 """
 @app.route("/api/report/tbs/<format>", methods=["GET"])
 def report_tbs(format: str):
-    data = reposity.data[data_reposity.transaction_key()]
-    if not data:
-        abort(404)
-
-    start_date = request.args.get('start_date')
     try:
-        start_date = datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%SZ")
-    except: 
+        data = reposity.data[data_reposity.transaction_key()]
+        if not data:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message="Error in report_tbs: There is no data to filter by model")
+            abort(404)
+
+        start_date = request.args.get('start_date')
+        try:
+            start_date = datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%SZ")
+        except Exception as e: 
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message=f"Error in report_tbs: {str(e)}")
+            abort(500)
+
+        end_date = request.args.get('end_date')
+        storage_name = request.args.get('storage_name')
+
+        period_filter: filter = filter.create({"end_period": end_date})
+        storage_filter: filter = filter.create({"name": storage_name}, "storage")
+
+        prototype = filter_prototype(data)
+        prototype.create(period_filter)
+        prototype.create(storage_filter)
+
+        if not prototype.data:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message="Error in report_tbs: There is no data to filter by model")
+            abort(404)
+
+        process_tbs = factory.create("tbs")
+        tbs = process_tbs.processor(prototype.data, start_date)
+
+        format = format.upper()
+        inner_format = format_reporting(format)
+        report = report_factory(manager).create(inner_format)
+        report.create([tbs])
+
+        observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message="Tbs report has been successfully created")
+        return report.result
+    except Exception as e:
+        observe_service.raise_event(
+            event_type.LOGGING, 
+            log_type=logging_type.ERROR, 
+            message=f"Error in report_tbs: {str(e)}"
+        )
         abort(500)
-
-    end_date = request.args.get('end_date')
-    storage_name = request.args.get('storage_name')
-
-    period_filter: filter = filter.create({"end_period": end_date})
-    storage_filter: filter = filter.create({"name": storage_name}, "storage")
-
-    prototype = filter_prototype(data)
-    prototype.create(period_filter)
-    prototype.create(storage_filter)
-
-    if not prototype.data:
-        abort(404)
-
-    process_tbs = factory.create("tbs")
-    tbs = process_tbs.processor(prototype.data, start_date)
-
-    format = format.upper()
-    inner_format = format_reporting(format)
-    report = report_factory(manager).create(inner_format)
-    report.create([tbs])
-
-    return report.result
 
 """
 Api для получения номенклатуры по id
 """
 @app.route("/api/nomenclature/<id>", methods=["GET"])
 def get_nomenclature(id: str):
-    data = reposity.data[data_reposity.nomenclature_key()]
+    try:
+        data = reposity.data[data_reposity.nomenclature_key()]
 
-    if not data:
-        abort(404)
+        if not data:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message="Error in get_nomenclature: There is no data to filter by model")
+            abort(404)
 
-    nom_data = nom_service.get_nomenclature(data, id)
+        nom_data = nom_service.get_nomenclature(data, id)
 
-    if not nom_data:
-        return {}
+        if not nom_data:
+            return {}
 
-    report = report_factory(manager).create_default()
-    report.create(nom_data)
+        report = report_factory(manager).create_default()
+        report.create(nom_data)
 
-    return report.result
+        observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message="Nomenclature successfully received")
+        return report.result
+    except Exception as e:
+        observe_service.raise_event(
+            event_type.LOGGING, 
+            log_type=logging_type.ERROR, 
+            message=f"Error in get_nomenclature: {str(e)}"
+        )
+        abort(500)
 
 """
 Api для добавления номенклатуры
 """
 @app.route("/api/put_nomenclature", methods=["PUT"])
 def put_nomenclature():
-    new_nomenclature = request.json
+    try:
+        new_nomenclature = request.json
 
-    if not new_nomenclature:
-        abort(400)
+        if not new_nomenclature:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message="Error in put_nomenclature: Invalid data to add")
+            abort(400)
 
-    nomenclature_exists = nom_service.put_nomenclature(new_nomenclature, reposity.data)
-    if nomenclature_exists: 
-        return "Such a nomenclature already exists"
-    else:
-        return "Nomenclature successfully added"
+        nomenclature_exists = nom_service.put_nomenclature(new_nomenclature, reposity.data)
+        if nomenclature_exists: 
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message="Such a nomenclature already exists")
+            return "Such a nomenclature already exists"
+        else:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message="Nomenclature successfully added")
+            return "Nomenclature successfully added"
+    except Exception as e:
+        observe_service.raise_event(
+            event_type.LOGGING, 
+            log_type=logging_type.ERROR, 
+            message=f"Error in put_nomenclature: {str(e)}"
+        )
+        abort(500)
     
 """
 Api для добавления номенклатуры
 """
 @app.route("/api/delete_nomenclature", methods=["DELETE"])
 def delete_nomenclature():
-    del_nomenclature = request.json
-    data = reposity.data[data_reposity.nomenclature_key()]
+    try:
+        del_nomenclature = request.json
+        data = reposity.data[data_reposity.nomenclature_key()]
 
-    if not del_nomenclature:
-        abort(400)
+        if not del_nomenclature:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message="Error in delete_nomenclature: Invalid data to delete")
+            abort(400)
 
-    observe_service.raise_event(event_type.DELETE_NOMENCLATURE, nomenclature=del_nomenclature, data=data)
-    return "Nomenclature removed"
-
+        observe_service.raise_event(event_type.DELETE_NOMENCLATURE, nomenclature=del_nomenclature, data=data)
+        observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message="Nomenclature successfully removed")
+        return "Nomenclature successfully removed"
+    except Exception as e:
+        observe_service.raise_event(
+            event_type.LOGGING, 
+            log_type=logging_type.ERROR, 
+            message=f"Error in delete_nomenclature: {str(e)}"
+        )
+        abort(500)
 """
-Api для добавления номенклатуры
+Api для изменения номенклатуры
 """
 @app.route("/api/change_nomenclature", methods=["PATCH"])
 def change_nomenclature():
-    change_nomenclature = request.json
+    try:
+        change_nomenclature = request.json
 
-    if not change_nomenclature:
-        abort(400)
+        if not change_nomenclature:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message="Error in change_nomenclature: Invalid data to change")
+            abort(400)
 
-    observe_service.raise_event(event_type.CHANGE_NOMENCLATURE, nomenclature=change_nomenclature, data=reposity.data)
-    return "Nomenclature changed"
+        observe_service.raise_event(event_type.CHANGE_NOMENCLATURE, nomenclature=change_nomenclature, data=reposity.data)
+        observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message="Nomenclature successfully changed")
+        return "Nomenclature successfully changed"
+    except Exception as e:
+        observe_service.raise_event(
+            event_type.LOGGING, 
+            log_type=logging_type.ERROR, 
+            message=f"Error in change_nomenclature: {str(e)}"
+        )
+        abort(500)
 
 """
 Api для получения даты блокировки
 """
 @app.route("/api/get_date_block", methods=["GET"])
 def get_date_block():
-    return str(manager.current_settings.date_block)
+    try:
+        observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message="Getting the blocking date")
+        return str(manager.current_settings.date_block)
+    except Exception as e:
+        observe_service.raise_event(
+            event_type.LOGGING, 
+            log_type=logging_type.ERROR, 
+            message=f"Error in get_date_block: {str(e)}"
+        )
+        abort(500)
 
 """
 Api для получения фильтрованных данных по модели
 """
 @app.route("/api/filter/<model>", methods=["POST"])
 def filter_data(model: str):
+    try:
+        if model not in data_reposity.keys():
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message=f"Error in filter_data: This model was not found: {model}")
+            abort(400)
 
-    if model not in data_reposity.keys():
-        abort(400)
+        request_data = request.get_json()
+        item_filter = filter.create(request_data)
 
-    request_data = request.get_json()
-    item_filter = filter.create(request_data)
+        data = reposity.data[model]
+        if not data:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message=f"Error in filter_data: There is no data to filter by model")
+            abort(404)
 
-    data = reposity.data[model]
-    if not data:
-        abort(404)
+        prototype = filter_prototype(data)
+        prototype.create(item_filter)
 
-    prototype = filter_prototype(data)
-    prototype.create(item_filter)
+        if not prototype.data:
+            return {}
 
-    if not prototype.data:
-        return {}
-
-    report = report_factory(manager).create_default()
-    report.create(prototype.data)
-
-    return report.result
+        report = report_factory(manager).create_default()
+        report.create(prototype.data)
+        observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message=f"The {model} report has been successfully created")
+        return report.result
+    except Exception as e:
+        observe_service.raise_event(
+            event_type.LOGGING, 
+            log_type=logging_type.ERROR, 
+            message=f"Error in filter_data: {str(e)}"
+        )
+        abort(500)
 
 """
 Api для получения фильтрованных данных по транзакциям
 """
 @app.route("/api/transaction/filter", methods=["POST"])
 def filter_transaction():
-    report = report_factory(manager).create_default()
-    data = reposity.data[data_reposity.transaction_key()]
-    if not data:
-        abort(404)
+    try:
+        report = report_factory(manager).create_default()
+        data = reposity.data[data_reposity.transaction_key()]
+        if not data:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message=f"Error in filter_transaction: There is no data to filter by model")
+            abort(404)
 
-    request_data = request.get_json()
-    storage = request_data.get("storage")
-    nomenclature = request_data.get("nomenclature")
+        request_data = request.get_json()
+        storage = request_data.get("storage")
+        nomenclature = request_data.get("nomenclature")
 
-    if storage is None or nomenclature is None:
-         abort(400)
-    
-    storage_filter: filter = filter.create(storage, "storage")
-    nomenclature_filter: filter = filter.create(nomenclature, "nomenclature")
+        if storage is None or nomenclature is None:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message=f"Error in filter_transaction: This model was not found")
+            abort(400)
+        
+        storage_filter: filter = filter.create(storage, "storage")
+        nomenclature_filter: filter = filter.create(nomenclature, "nomenclature")
 
-    # Фультруем transaction
-    prototype = filter_prototype(data)
-    prototype.create(storage_filter)
-    prototype.create(nomenclature_filter)
+        # Фультруем transaction
+        prototype = filter_prototype(data)
+        prototype.create(storage_filter)
+        prototype.create(nomenclature_filter)
 
-    if not prototype.data:
-        return {}
+        if not prototype.data:
+            return {}
 
-    
-    report.create(prototype.data)
-
-    return report.result
-
+        
+        report.create(prototype.data)
+        observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message=f"The transaction report has been successfully created")
+        return report.result
+    except Exception as e:
+        observe_service.raise_event(
+            event_type.LOGGING, 
+            log_type=logging_type.ERROR, 
+            message=f"Error in filter_transaction: {str(e)}"
+        )
+        abort(500)
 """
 Api для получения фильтрованных данных по складским оборотам
 """
 @app.route("/api/turnover/filter", methods=["POST"])
 def filter_turnover():
-    report = report_factory(manager).create_default()
-    data = reposity.data[data_reposity.transaction_key()]
-    if not data:
-        abort(404)
+    try:
+        report = report_factory(manager).create_default()
+        data = reposity.data[data_reposity.transaction_key()]
+        if not data:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message=f"Error in filter_turnover: There is no data to filter by model")
+            abort(404)
 
-    request_data = request.get_json()
-    period = request_data.get("period")
+        request_data = request.get_json()
+        period = request_data.get("period")
 
-    if period is None:
-         abort(400)
+        if period is None:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message=f"Error in filter_turnover: This model was not found")
+            abort(400)
 
-    period_filter: filter = filter.create(period)
-    prototype_period = filter_prototype(data)
-    prototype_period.create(period_filter)
+        period_filter: filter = filter.create(period)
+        prototype_period = filter_prototype(data)
+        prototype_period.create(period_filter)
 
-    storage = request_data.get("storage")
-    nomenclature = request_data.get("nomenclature")
+        storage = request_data.get("storage")
+        nomenclature = request_data.get("nomenclature")
 
-    if storage is None or nomenclature is None:
-         abort(400)
+        if storage is None or nomenclature is None:
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.ERROR, 
+                                        message=f"Error in filter_turnover: This model was not found")
+            abort(400)
 
-    process_turnover = factory.create("turnover")
-    turnovers = process_turnover.processor(prototype_period.data)
-    
-    if not turnovers:
-        return {}
+        process_turnover = factory.create("turnover")
+        turnovers = process_turnover.processor(prototype_period.data)
+        
+        if not turnovers:
+            return {}
 
-    storage_filter: filter = filter.create(storage, "storage")
-    nomenclature_filter: filter = filter.create(nomenclature, "nomenclature")
+        storage_filter: filter = filter.create(storage, "storage")
+        nomenclature_filter: filter = filter.create(nomenclature, "nomenclature")
 
-    # Фультруем turnover
-    prototype = filter_prototype(list(turnovers.values()))
-    prototype.create(storage_filter)
-    prototype.create(nomenclature_filter)
+        # Фультруем turnover
+        prototype = filter_prototype(list(turnovers.values()))
+        prototype.create(storage_filter)
+        prototype.create(nomenclature_filter)
 
-    if not prototype.data:
-        return {}
+        if not prototype.data:
+            return {}
 
-    report.create(prototype.data)
+        report.create(prototype.data)
 
-    return report.result
+        observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message=f"The turnover report has been successfully created")
+        return report.result
+    except Exception as e:
+        observe_service.raise_event(
+            event_type.LOGGING, 
+            log_type=logging_type.ERROR, 
+            message=f"Error in filter_turnover: {str(e)}"
+        )
+        abort(500)
 
 """
 Api для изменения даты блокировки
 """
 @app.route("/api/post_date_block", methods=["POST"])
 def change_date_block():
-    request_data = request.get_json()
-    new_date_block = request_data.get("date_block")
-
     try:
-        new_date_block = datetime.strptime(new_date_block, "%Y-%m-%dT%H:%M:%SZ")
-    except:
+        request_data = request.get_json()
+        new_date_block = request_data.get("date_block")
+
+        try:
+            new_date_block = datetime.strptime(new_date_block, "%Y-%m-%dT%H:%M:%SZ")
+        except Exception as e:
+            observe_service.raise_event(
+                event_type.LOGGING, 
+                log_type=logging_type.ERROR, 
+                message=f"Error in change_date_block: {str(e)}"
+            )
+            abort(500)
+
+        if new_date_block != manager.current_settings.date_block:
+
+            # Рассчитываем обороты
+            data = reposity.data[data_reposity.transaction_key()]
+            if not data:
+                abort(404)
+
+            observe_service.raise_event(event_type.CHANGE_DATE_BLOCK, date_block=new_date_block, data=data)
+
+        observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message=f"Block date changed")
+        return "Block date changed"
+    except Exception as e:
+        observe_service.raise_event(
+            event_type.LOGGING, 
+            log_type=logging_type.ERROR, 
+            message=f"Error in change_date_block: {str(e)}"
+        )
         abort(500)
-
-    if new_date_block != manager.current_settings.date_block:
-
-        # Рассчитываем обороты
-        data = reposity.data[data_reposity.transaction_key()]
-        if not data:
-            abort(404)
-
-        observe_service.raise_event(event_type.CHANGE_DATE_BLOCK, date_block=new_date_block, data=data)
-
-    return "Ok"
 
 """
 Api для сохранения текущих данных
@@ -395,8 +572,15 @@ Api для сохранения текущих данных
 def save_data_reposity():
         try:
             observe_service.raise_event(event_type.SAVE_DATA_REPOSITY, data=reposity.data)
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message=f"Data saved successfully")
             return "Data saved successfully"
-        except:
+        except Exception as e:
+            observe_service.raise_event(
+                event_type.LOGGING, 
+                log_type=logging_type.ERROR, 
+                message=f"Error in save_data_reposity: {str(e)}"
+            )
             abort(500)
 
 """
@@ -406,11 +590,18 @@ Api для восстановления данных
 def restore_data_reposity():
         try:
             observe_service.raise_event(event_type.RESTORE_DATA_REPOSITY, data=reposity.data)
+            observe_service.raise_event(event_type.LOGGING, log_type=logging_type.INFO, 
+                                        message=f"Data restored successfully")
             return "Data restored successfully"
-        except:
+        except Exception as e:
+            observe_service.raise_event(
+                event_type.LOGGING, 
+                log_type=logging_type.ERROR, 
+                message=f"Error in save_data_reposity: {str(e)}"
+            )
             abort(500)
 
 if __name__ == "__main__":
     app.add_api("swagger.yaml")
-    app.run(port = 8080)
+    app.run(host="0.0.0.0", port = 8080)
 
