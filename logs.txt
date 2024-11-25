@@ -1,0 +1,22 @@
+
+=== Logging started at 2024-11-23 20:54:48.105814 ===
+<Time>, <Type>, <Message>
+2024-11-23 20:54:48.340130, DEBUG, Message: organization_name set to: Pizza
+2024-11-23 20:54:48.340648, DEBUG, Message: inn set to: 123456789000
+2024-11-23 20:54:48.340648, DEBUG, Message: account set to: 98765432198
+2024-11-23 20:54:48.340648, DEBUG, Message: сorrespondent_account set to: 12003400567
+2024-11-23 20:54:48.340648, DEBUG, Message: bik set to: 617283945
+2024-11-23 20:54:48.340648, DEBUG, Message: type_property set to: qwert
+2024-11-23 20:54:48.340648, DEBUG, Message: date_block set to: 2020-10-30 16:00:01
+2024-11-23 20:54:48.340648, DEBUG, Message: first_start set to: True
+2024-11-23 20:54:48.340648, DEBUG, Message: min_log_level set to: logging_type.DEBUG
+
+=== Logging started at 2024-11-23 20:54:48.340648 ===
+<Time>, <Type>, <Message>
+2024-11-23 20:55:19.593236, INFO, Message: Nomenclature successfully added
+2024-11-23 20:56:15.116676, INFO, Message: Nomenclature successfully removed
+2024-11-23 20:58:14.652563, INFO, Message: Nomenclature successfully changed
+2024-11-23 20:59:14.608611, INFO, Message: Nomenclature successfully received
+2024-11-23 21:00:22.335408, INFO, Message: The range report has been successfully created
+2024-11-23 21:00:42.380492, INFO, Message: The transaction report has been successfully created
+2024-11-23 21:01:14.366890, INFO, Message: The turnover report has been successfully created

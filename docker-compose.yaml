@@ -1,0 +1,17 @@
+services:
+  dpattern_1:
+    container_name: dpattern_1
+    image: dpattern
+    ports:
+      - 8000:8080
+    volumes:
+      - ./settings.json:/settings.json
+  dpattern_2:
+    container_name: dpattern_2
+    image: dpattern
+    ports:
+      - 8001:8080
+    volumes:
+      - ./settings.json:/settings.json
+networks:
+  default:
